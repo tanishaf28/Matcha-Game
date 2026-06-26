@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Build a "Fill the Matcha Cup" Game · Codédex Tutorial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+/* ── TOKENS ── */
+:root{
+  --g0:#f2faf2;--g1:#d6edd6;--g2:#aad5aa;--g3:#6db86d;--g4:#4a9c4a;--g5:#2d7a2d;--g6:#1a521a;
+  --cream:#fdf9f2;--parch:#f5ede0;--ink:#1c2b1c;--ink2:#3a4f3a;--muted:#6e8a6e;
+  --gold:#e9a825;--goldp:#fef8e7;--pink:#f9c0cb;--pinkp:#fff4f6;
+  --border:#cce5cc;--radius:14px;--radiuslg:22px;--radiuspill:999px;
+  --shadow:0 4px 24px rgba(74,156,74,.10);
+  --codbg:#16201a;--codtx:#b8deb8;
+}
+
+body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);line-height:1.8;font-size:16px}
+
+/* ── NAV ── */
+.nav{
+  position:sticky;top:0;z-index:200;
+  background:rgba(253,249,242,.93);backdrop-filter:blur(14px);
+  border-bottom:1.5px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.8rem;height:54px;
+}
+.nav-brand{font-size:17px;font-weight:900;color:var(--g4);display:flex;align-items:center;gap:6px}
+.nav-chips{display:flex;gap:7px}
+.chip{font-size:11px;font-weight:800;padding:3px 11px;border-radius:var(--radiuspill)}
+.chip-g{background:var(--g1);color:var(--g5)}
+.chip-gold{background:var(--goldp);color:#9a6d0a}
+.chip-pink{background:var(--pinkp);color:#b03060}
+
+/* ── HERO ── */
+.hero{
+  background:linear-gradient(145deg,#e6f5e6 0%,var(--parch) 55%,#fff4f6 100%);
+  padding:3.5rem 2rem 3rem;text-align:center;
+  border-bottom:1.5px solid var(--border);
+  position:relative;overflow:hidden;
+}
+.floaties{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+.fl{position:absolute;font-size:1.3rem;opacity:.18;animation:fl 9s ease-in-out infinite}
+@keyframes fl{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(15deg)}}
+.hero-eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;
+  background:var(--g1);color:var(--g5);border-radius:var(--radiuspill);
+  padding:5px 14px;margin-bottom:1.1rem;
+}
+.hero h1{
+  font-size:clamp(2rem,5vw,3rem);font-weight:900;line-height:1.15;
+  color:var(--ink);letter-spacing:-1px;margin-bottom:.9rem;
+}
+.hero h1 em{font-style:normal;color:var(--g4)}
+.hero-sub{font-size:1.05rem;color:var(--ink2);max-width:540px;margin:0 auto 1.8rem;line-height:1.65}
+.hero-meta{display:flex;justify-content:center;gap:1.2rem;flex-wrap:wrap;font-size:13px;color:var(--muted);font-weight:700}
+.hero-meta span{display:flex;align-items:center;gap:5px}
+
+/* ── KAWAII CUP (SVG animated) ── */
+.cup-hero{margin:2rem auto 0;width:160px;display:flex;flex-direction:column;align-items:center;gap:.5rem}
+.cup-hero p{font-size:12px;color:var(--muted);font-weight:700}
+
+/* ── LIVE DEMO STRIP ── */
+.demo-strip{background:var(--g0);border-bottom:1.5px solid var(--border);padding:2.5rem 2rem}
+.demo-strip-inner{max-width:900px;margin:0 auto;display:flex;align-items:center;gap:3rem;flex-wrap:wrap}
+.demo-copy{flex:1;min-width:220px}
+.demo-copy h2{font-size:1.35rem;font-weight:900;color:var(--g5);margin-bottom:.5rem}
+.demo-copy p{font-size:.9rem;color:var(--ink2)}
+.demo-card{
+  flex:0 0 auto;background:#fff;border:1.5px solid var(--border);
+  border-radius:var(--radiuslg);padding:1.6rem 2rem;
+  box-shadow:var(--shadow);min-width:270px;
+  display:flex;flex-direction:column;align-items:center;gap:1rem;
+}
+.dc-title{font-size:.95rem;font-weight:900;color:var(--ink)}
+.dc-badge{font-size:11px;font-weight:800;background:var(--g1);color:var(--g5);border-radius:var(--radiuspill);padding:3px 12px}
+
+/* cup in demo */
+.cup-wrap{position:relative;width:110px;height:150px}
+.cup-svg-wrap{width:110px;height:150px;position:relative}
+.cup-inner-liquid{
+  position:absolute;bottom:14px;left:12px;right:12px;
+  height:0%;background:linear-gradient(180deg,#8acf6e 0%,#4a9c4a 100%);
+  border-radius:0 0 18px 18px;transition:height .04s linear;overflow:hidden;
+}
+.liquid-shimmer{position:absolute;top:0;left:0;width:100%;height:6px;background:rgba(200,255,200,.5);border-radius:3px 3px 0 0}
+.target-band{
+  position:absolute;left:12px;right:12px;
+  background:rgba(233,168,37,.18);
+  border-top:2px dashed var(--gold);border-bottom:2px dashed var(--gold);
+  pointer-events:none;z-index:3;
+}
+
+.dc-stats{display:flex;gap:9px}
+.dc-stat{background:var(--g0);border-radius:10px;padding:6px 13px;text-align:center;min-width:66px}
+.dc-stat-label{font-size:10px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.dc-stat-val{font-size:1.15rem;font-weight:900;color:var(--g4)}
+
+.pour-btn{
+  width:185px;padding:13px;
+  background:var(--g4);color:#fff;
+  border:none;border-radius:var(--radiuspill);
+  font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;
+  cursor:pointer;user-select:none;touch-action:none;
+  box-shadow:0 4px 0 var(--g5);
+  transition:transform .08s,box-shadow .08s;
+}
+.pour-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--g5)}
+.pour-btn:disabled{background:#b0ccb0;box-shadow:0 4px 0 #8aaa8a;cursor:default}
+.dc-result{font-size:14px;font-weight:800;min-height:20px;text-align:center;color:var(--g4)}
+.dc-attempts{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:24px}
+.ap{font-size:11px;font-weight:800;padding:3px 10px;border-radius:var(--radiuspill)}
+.ap.win{background:var(--g1);color:var(--g5)}
+.ap.lose{background:#fde8e8;color:#c0392b}
+.dc-new{
+  font-size:12px;font-weight:700;color:var(--muted);
+  background:transparent;border:1.5px solid var(--border);
+  border-radius:var(--radiuspill);padding:4px 14px;cursor:pointer;font-family:'Nunito',sans-serif;
+}
+.dc-new:hover{border-color:var(--g4);color:var(--g4)}
+
+/* ── PAGE LAYOUT ── */
+.page{max-width:760px;margin:0 auto;padding:0 1.8rem 5rem}
+
+/* ── TOC ── */
+.toc{
+  background:var(--g0);border:1.5px solid var(--g1);
+  border-radius:var(--radiuslg);padding:1.4rem 1.8rem;
+  margin:2.5rem 0;
+}
+.toc h3{font-size:11px;font-weight:800;color:var(--g4);text-transform:uppercase;letter-spacing:.07em;margin-bottom:.8rem}
+.toc ol{list-style:none;display:flex;flex-direction:column;gap:4px}
+.toc ol li a{
+  font-size:14px;font-weight:700;color:var(--ink2);text-decoration:none;
+  display:flex;align-items:center;gap:9px;padding:3px 0;
+}
+.toc ol li a:hover{color:var(--g4)}
+.toc-num{
+  font-size:11px;font-weight:900;width:22px;height:22px;
+  border-radius:50%;background:var(--g2);color:var(--g6);
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+
+/* ── SECTIONS ── */
+section{margin-top:3.2rem;scroll-margin-top:66px}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:7px;
+  font-size:11px;font-weight:800;color:var(--g4);
+  text-transform:uppercase;letter-spacing:.07em;margin-bottom:.3rem;
+}
+.step-dot{
+  width:24px;height:24px;border-radius:50%;
+  background:var(--g4);color:#fff;
+  font-size:12px;font-weight:900;
+  display:flex;align-items:center;justify-content:center;
+}
+h2.sh{font-size:1.5rem;font-weight:900;color:var(--ink);letter-spacing:-.4px;margin-bottom:.7rem;line-height:1.25}
+p.body{color:var(--ink2);margin-bottom:1rem}
+p.body:last-child{margin-bottom:0}
+a.link{color:var(--g4);font-weight:700;text-decoration:underline;text-underline-offset:3px}
+
+/* ── CALLOUTS ── */
+.callout{border-radius:var(--radius);padding:1rem 1.2rem;margin:1.4rem 0;display:flex;gap:12px;align-items:flex-start}
+.callout-icon{font-size:1.25rem;flex-shrink:0;margin-top:2px}
+.callout-body{font-size:14.5px;color:var(--ink2);line-height:1.65}
+.callout-body strong{color:var(--ink);font-weight:800}
+.callout.tip{background:var(--goldp);border-left:4px solid var(--gold)}
+.callout.note{background:var(--g0);border-left:4px solid var(--g3)}
+.callout.yay{background:var(--pinkp);border-left:4px solid var(--pink)}
+
+/* ── FILE TREE ── */
+.file-tree{
+  background:var(--codbg);border-radius:var(--radius);
+  padding:1.1rem 1.5rem;font-family:'Fira Code',monospace;
+  font-size:13px;color:var(--codtx);line-height:2.1;margin:1.2rem 0;
+}
+.ft-dir{color:#82d7f7;font-weight:600}
+.ft-new{color:var(--gold)}
+.ft-cmt{color:#4a7a4a;font-style:italic}
+
+/* ── CODE BLOCKS ── */
+.cblock{
+  position:relative;background:var(--codbg);
+  border-radius:var(--radius);margin:1.3rem 0;
+  overflow:hidden;box-shadow:var(--shadow);
+}
+.cblock-top{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:9px 15px;background:rgba(255,255,255,.04);
+  border-bottom:1px solid rgba(180,220,180,.1);
+}
+.c-dots{display:flex;gap:5px}
+.c-dot{width:11px;height:11px;border-radius:50%}
+.c-dot:nth-child(1){background:#ff5f57}
+.c-dot:nth-child(2){background:#ffbd2e}
+.c-dot:nth-child(3){background:#28c840}
+.c-fname{font-family:'Fira Code',monospace;font-size:12px;color:rgba(184,222,184,.55);display:flex;align-items:center;gap:10px}
+.c-copy{
+  font-size:12px;font-weight:700;color:rgba(184,222,184,.45);
+  background:transparent;border:none;cursor:pointer;
+  font-family:'Nunito',sans-serif;padding:3px 8px;border-radius:4px;transition:color .15s;
+}
+.c-copy:hover{color:var(--codtx)}
+pre{
+  font-family:'Fira Code',monospace;font-size:13px;line-height:1.75;
+  color:var(--codtx);padding:1.15rem 1.45rem;overflow-x:auto;margin:0;
+}
+/* syntax */
+.kw{color:#d49bff}.fn{color:#82d7f7}.str{color:#a8d88a}
+.cm{color:#4a7a4a;font-style:italic}.nm{color:#fac25a}
+.tg{color:#f0a87a}.at{color:#fac25a}.vl{color:#a8d88a}
+.pp{color:#82d7f7}.sl{color:#f0a87a}
+
+/* ── EXPLAIN CARD ── */
+.exp{
+  background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);
+  padding:1rem 1.2rem;margin:1rem 0 1.4rem;font-size:14.5px;color:var(--ink2);
+  box-shadow:0 2px 10px rgba(74,156,74,.06);line-height:1.7;
+}
+.exp strong{color:var(--g4);font-weight:800}
+
+/* ── CHECKPOINT ── */
+.check{
+  background:linear-gradient(135deg,var(--g1),#d4f0d4);
+  border:1.5px solid var(--g2);border-radius:var(--radiuslg);
+  padding:1.1rem 1.4rem;margin:2rem 0;
+  display:flex;align-items:center;gap:13px;
+}
+.check-icon{font-size:1.9rem;flex-shrink:0}
+.check-body{font-size:14px;font-weight:700;color:var(--g5)}
+.check-body span{display:block;font-size:12.5px;font-weight:600;color:var(--g3);margin-top:2px}
+
+/* ── CONCEPT GRID ── */
+.cg{display:grid;grid-template-columns:repeat(auto-fit,minmax(175px,1fr));gap:12px;margin:1.4rem 0}
+.cc{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:.9rem 1.1rem;box-shadow:0 2px 10px rgba(74,156,74,.05)}
+.cc .ic{font-size:1.5rem;margin-bottom:5px}
+.cc h4{font-size:13.5px;font-weight:900;color:var(--ink);margin-bottom:3px}
+.cc p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.5}
+
+/* ── INLINE CODE ── */
+code{
+  font-family:'Fira Code',monospace;font-size:13px;
+  background:rgba(74,156,74,.1);color:var(--g4);
+  padding:1px 6px;border-radius:4px;font-weight:600;
+}
+
+/* ── DIVIDER ── */
+hr.div{border:none;border-top:2px dashed var(--border);margin:2.5rem 0}
+
+/* ── STEP GRID (what we build) ── */
+.step-grid{display:flex;flex-direction:column;gap:0;margin:1.5rem 0}
+.step-row{display:flex;gap:0;align-items:stretch}
+.step-line{width:36px;flex-shrink:0;display:flex;flex-direction:column;align-items:center}
+.step-line-dot{width:14px;height:14px;border-radius:50%;background:var(--g3);margin-top:3px;flex-shrink:0;border:2px solid #fff;box-shadow:0 0 0 2px var(--g3)}
+.step-line-bar{width:2px;background:var(--g1);flex:1;margin-top:2px}
+.step-content{flex:1;background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:.85rem 1.1rem;margin-bottom:10px;box-shadow:0 2px 8px rgba(74,156,74,.05)}
+.step-content h4{font-size:14px;font-weight:900;color:var(--ink);margin-bottom:3px}
+.step-content p{font-size:13px;color:var(--muted);margin:0}
+.step-row:last-child .step-line-bar{display:none}
+
+/* ── FINAL BANNER ── */
+.finale{
+  background:linear-gradient(135deg,var(--g4) 0%,var(--g5) 100%);
+  border-radius:var(--radiuslg);padding:2.4rem 2rem;text-align:center;
+  color:#fff;margin-top:3rem;
+}
+.finale h2{font-size:1.7rem;font-weight:900;margin-bottom:.5rem}
+.finale p{color:rgba(255,255,255,.82);max-width:460px;margin:0 auto 1.4rem;font-size:.9rem}
+.finale-tags{display:flex;justify-content:center;gap:7px;flex-wrap:wrap}
+.ftag{font-size:12px;font-weight:700;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);border-radius:var(--radiuspill);padding:4px 13px;color:#fff}
+
+/* ── STRETCH GRID ── */
+.stretch-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin:1.4rem 0}
+.sc{background:#fff;border:1.5px solid var(--border);border-radius:var(--radius);padding:1rem 1.1rem}
+.sc .ic{font-size:1.4rem;margin-bottom:6px}
+.sc h4{font-size:13.5px;font-weight:900;color:var(--ink);margin-bottom:3px}
+.sc p{font-size:12.5px;color:var(--muted);margin:0;line-height:1.5}
+
+/* ── FOOTER ── */
+footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);border-top:1.5px solid var(--border)}
+
+/* ── RESPONSIVE ── */
+@media(max-width:600px){
+  .demo-strip-inner{flex-direction:column;align-items:center}
+  .hero h1{font-size:1.8rem}
+  .nav{padding:0 1rem}
+  .page{padding:0 1.1rem 4rem}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-brand">🍵 Codédex</div>
+  <div class="nav-chips">
+    <span class="chip chip-g">Project Tutorial</span>
+    <span class="chip chip-gold">⭐ Beginner</span>
+    <span class="chip chip-pink">HTML · CSS · JS</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero">
+  <div class="floaties" aria-hidden="true">
+    <span class="fl" style="top:10%;left:4%;animation-delay:0s">🍃</span>
+    <span class="fl" style="top:18%;left:90%;animation-delay:1.3s">🌿</span>
+    <span class="fl" style="top:70%;left:2%;animation-delay:2.1s">🍃</span>
+    <span class="fl" style="top:72%;left:91%;animation-delay:.7s">🌿</span>
+    <span class="fl" style="top:42%;left:95%;animation-delay:1.9s;font-size:1rem">✨</span>
+    <span class="fl" style="top:85%;left:48%;animation-delay:3.2s;font-size:.9rem">✨</span>
+    <span class="fl" style="top:5%;left:55%;animation-delay:2.8s;font-size:.85rem">💚</span>
+  </div>
+
+  <div class="hero-eyebrow">🎮 Mini Game · HTML · CSS · JavaScript</div>
+  <h1>Build a <em>"Fill the Matcha Cup"</em><br/>Game from Scratch</h1>
+  <p class="hero-sub">
+    A super beginner-friendly project where you'll build a cute precision game using just HTML, CSS, and vanilla JavaScript. No frameworks. No libraries. Just you, a cup, and some matcha energy. ✨
+  </p>
+  <div class="hero-meta">
+    <span>🕐 ~45 minutes</span>
+    <span>🌱 Beginner friendly</span>
+    <span>📁 3 files only</span>
+    <span>🏆 Fully playable</span>
+  </div>
+
+  <!-- Kawaii animated SVG cup -->
+  <div class="cup-hero">
+    <svg id="hero-cup" width="120" height="160" viewBox="0 0 120 160" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Animated kawaii matcha cup">
+      <defs>
+        <clipPath id="cup-clip">
+          <rect x="10" y="16" width="100" height="130" rx="18" ry="22"/>
+        </clipPath>
+      </defs>
+      <!-- glass body -->
+      <rect x="10" y="16" width="100" height="130" rx="18" ry="22" fill="#f0f7ee" stroke="#a8d0a8" stroke-width="3"/>
+      <!-- liquid fill (animated) -->
+      <g clip-path="url(#cup-clip)">
+        <rect id="hliq" x="10" y="95" width="100" height="51" fill="#5faa5f"/>
+        <!-- wave on surface -->
+        <ellipse id="hwave" cx="60" cy="95" rx="52" ry="5" fill="#8acf6e"/>
+      </g>
+      <!-- target zone lines -->
+      <line x1="10" y1="79" x2="110" y2="79" stroke="#e9a825" stroke-width="1.5" stroke-dasharray="5,4" opacity=".7"/>
+      <line x1="10" y1="95" x2="110" y2="95" stroke="#e9a825" stroke-width="1.5" stroke-dasharray="5,4" opacity=".7"/>
+      <!-- golden zone fill -->
+      <rect x="10" y="79" width="100" height="16" fill="rgba(233,168,37,.14)" clip-path="url(#cup-clip)"/>
+      <!-- rim -->
+      <rect x="10" y="16" width="100" height="16" rx="18" fill="#e8f5e8" stroke="#a8d0a8" stroke-width="2"/>
+      <!-- kawaii face -->
+      <!-- eyes -->
+      <circle cx="44" cy="125" r="5" fill="#2d4a2d"/>
+      <circle cx="76" cy="125" r="5" fill="#2d4a2d"/>
+      <!-- eye shine -->
+      <circle cx="46" cy="123" r="1.5" fill="#fff"/>
+      <circle cx="78" cy="123" r="1.5" fill="#fff"/>
+      <!-- smile -->
+      <path d="M 48 133 Q 60 142 72 133" stroke="#2d4a2d" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <!-- blushes -->
+      <ellipse cx="36" cy="131" rx="7" ry="4" fill="#f9c0cb" opacity=".6"/>
+      <ellipse cx="84" cy="131" rx="7" ry="4" fill="#f9c0cb" opacity=".6"/>
+    </svg>
+    <p>Your finished game will look something like this!</p>
+  </div>
+</header>
+
+<!-- LIVE DEMO -->
+<div class="demo-strip" aria-label="Playable game demo">
+  <div class="demo-strip-inner">
+    <div class="demo-copy">
+      <h2>Try it first! 🍵</h2>
+      <p>Before we build, have a play. <strong>Hold the button</strong> to pour matcha and <strong>release</strong> when you hit the golden dashed zone. Every round has a different target see how precise you are!</p>
+      <br/>
+      <p style="font-size:13px;color:var(--muted)">We'll build this together step by step. ↓</p>
+    </div>
+    <div class="demo-card">
+      <div id="dc-mascot" style="font-size:2rem;animation:fl 2s ease-in-out infinite">🍵</div>
+      <div class="dc-title">Fill the Matcha Cup</div>
+      <div class="dc-badge" id="dc-badge">Fill to 45% – 50%</div>
+
+      <div class="cup-wrap">
+        <!-- kawaii SVG cup for demo -->
+        <svg width="110" height="150" viewBox="0 0 110 150" style="position:absolute;top:0;left:0;z-index:1;pointer-events:none" aria-hidden="true">
+          <defs><clipPath id="dc-clip"><rect x="8" y="12" width="94" height="124" rx="16" ry="20"/></clipPath></defs>
+          <rect x="8" y="12" width="94" height="124" rx="16" ry="20" fill="#f0f7ee" stroke="#a8d0a8" stroke-width="2.5"/>
+          <rect x="8" y="12" width="94" height="14" rx="16" fill="#e8f5e8" stroke="#a8d0a8" stroke-width="2" style="z-index:5"/>
+        </svg>
+        <!-- liquid layer (behind face, above cup bg) -->
+        <div class="cup-inner-liquid" id="dc-liq">
+          <div class="liquid-shimmer"></div>
+        </div>
+        <!-- target band -->
+        <div class="target-band" id="dc-band" style="bottom:0;height:0"></div>
+        <!-- kawaii face SVG on top -->
+        <svg width="110" height="150" viewBox="0 0 110 150" style="position:absolute;top:0;left:0;z-index:4;pointer-events:none" aria-hidden="true">
+          <circle cx="38" cy="118" r="4.5" fill="#2d4a2d"/>
+          <circle cx="72" cy="118" r="4.5" fill="#2d4a2d"/>
+          <circle cx="39.5" cy="116.5" r="1.3" fill="#fff"/>
+          <circle cx="73.5" cy="116.5" r="1.3" fill="#fff"/>
+          <path id="dc-smile" d="M 42 125 Q 55 133 68 125" stroke="#2d4a2d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="29" cy="122" rx="6" ry="3.5" fill="#f9c0cb" opacity=".65"/>
+          <ellipse cx="81" cy="122" rx="6" ry="3.5" fill="#f9c0cb" opacity=".65"/>
+        </svg>
+      </div>
+
+      <div class="dc-stats">
+        <div class="dc-stat"><div class="dc-stat-label">Now</div><div class="dc-stat-val" id="dc-cur">0%</div></div>
+        <div class="dc-stat"><div class="dc-stat-label">Target</div><div class="dc-stat-val" id="dc-tgt">-</div></div>
+        <div class="dc-stat"><div class="dc-stat-label">Best</div><div class="dc-stat-val" id="dc-best">-</div></div>
+      </div>
+
+      <button class="pour-btn" id="dc-btn">Hold to pour 🍵</button>
+      <div class="dc-result" id="dc-result"></div>
+      <div class="dc-attempts" id="dc-attempts"></div>
+      <button class="dc-new" id="dc-restart">↻ New round</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TUTORIAL CONTENT ══════════ -->
+<main class="page">
+
+  <!-- TOC -->
+  <nav class="toc" aria-label="Table of contents">
+    <h3>🍵 What we'll cover</h3>
+    <ol>
+      <li><a href="#s0"><span class="toc-num">0</span>What are we building?</a></li>
+      <li><a href="#s1"><span class="toc-num">1</span>Set up your project</a></li>
+      <li><a href="#s2"><span class="toc-num">2</span>Build the HTML structure</a></li>
+      <li><a href="#s3"><span class="toc-num">3</span>Style it with CSS</a></li>
+      <li><a href="#s4"><span class="toc-num">4</span>Make it pour :JavaScript</a></li>
+      <li><a href="#s5"><span class="toc-num">5</span>Win/lose + score tracking</a></li>
+      <li><a href="#s6"><span class="toc-num">6</span>Stretch goals &amp; next steps</a></li>
+    </ol>
+  </nav>
+
+  <!-- ── SECTION 0 ── -->
+  <section id="s0">
+    <div class="eyebrow">🍃 Intro</div>
+    <h2 class="sh">What are we building and why?</h2>
+    <p class="body">
+      "Fill the Matcha Cup" is a hold-to-pour precision game. You hold a button, liquid rises, you release it at the right time to land in a golden target zone. Simple concept surprisingly hard to master.
+    </p>
+    <p class="body">
+      This is the perfect beginner project because it teaches you exactly the skills you need for interactive web pages, without any extra complexity. Here's what you'll learn:
+    </p>
+
+    <div class="cg">
+      <div class="cc"><div class="ic">🖱️</div><h4>Event listeners</h4><p>React to mouse clicks and touch, the core of every interactive web page.</p></div>
+      <div class="cc"><div class="ic">⏱️</div><h4>setInterval</h4><p>Run code on a timer, here we use it to tick the liquid level up while the button is held.</p></div>
+      <div class="cc"><div class="ic">🖼️</div><h4>DOM manipulation</h4><p>Update the cup fill, numbers, and messages live without refreshing the page.</p></div>
+      <div class="cc"><div class="ic">🔁</div><h4>Game state</h4><p>Track "is the game running? did the player win?" the logic behind any game.</p></div>
+    </div>
+
+    <div class="callout yay">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body"><strong>No experience with games needed!</strong> If you've written a little HTML before and have seen JavaScript code, you're ready. We'll explain everything as we go, line by line.</div>
+    </div>
+
+    <p class="body">Here's the full journey we'll take together:</p>
+    <div class="step-grid">
+      <div class="step-row">
+        <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
+        <div class="step-content"><h4>📁 Set up files</h4><p>Three files: <code>index.html</code>, <code>style.css</code>, <code>game.js</code></p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
+        <div class="step-content"><h4>🏗️ Write the HTML</h4><p>Cup, button, score labels: the bones of the page</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
+        <div class="step-content"><h4>🎨 Add CSS</h4><p>Make it cute, kawaii cup, green palette, pill buttons</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
+        <div class="step-content"><h4>⚙️ JavaScript: the pour engine</h4><p>setInterval + event listeners = liquid that rises on hold</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
+        <div class="step-content"><h4>🏆 Win/lose detection</h4><p>Check the level, give feedback, track history</p></div>
+      </div>
+      <div class="step-row">
+        <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
+        <div class="step-content"><h4>✨ Polish &amp; stretch goals</h4><p>Ideas to take it further once it's working</p></div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="div"/>
+
+  <!-- ── SECTION 1 ── -->
+  <section id="s1">
+    <div class="eyebrow"><span class="step-dot">1</span> Setup</div>
+    <h2 class="sh">Set up your project</h2>
+    <p class="body">
+      Create a new folder on your computer and name it <code>matcha-game</code>. Inside that folder, create these three files. You can use VS Code, Notepad, or any editor you like:
+    </p>
+
+    <div class="file-tree" role="img" aria-label="Project file structure">
+      <span class="ft-dir">matcha-game/</span><br/>
+      &nbsp;&nbsp;├── <span class="ft-new">index.html</span> &nbsp;<span class="ft-cmt">← the page and structure</span><br/>
+      &nbsp;&nbsp;├── <span class="ft-new">style.css</span> &nbsp;&nbsp;<span class="ft-cmt">← all the visuals &amp; kawaii-ness</span><br/>
+      &nbsp;&nbsp;└── <span class="ft-new">game.js</span> &nbsp;&nbsp;&nbsp;<span class="ft-cmt">← the game logic</span>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>Using VS Code?</strong> Install the <strong>Live Server</strong> extension (by Ritwick Dey). Right-click your <code>index.html</code> → "Open with Live Server" and your browser auto-updates every time you save. Super helpful!
+      </div>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">🌿</span>
+      <div class="callout-body">
+        You can also use <strong><a href="https://codepen.io" class="link" target="_blank" rel="noopener">CodePen</a></strong> or <strong><a href="https://replit.com" class="link" target="_blank" rel="noopener">Replit</a></strong> if you don't want to set up anything locally just paste code as we go.
+      </div>
+    </div>
+  </section>
+
+  <hr class="div"/>
+
+  <!-- ── SECTION 2 ── -->
+  <section id="s2">
+    <div class="eyebrow"><span class="step-dot">2</span> HTML</div>
+    <h2 class="sh">Build the HTML structure</h2>
+    <p class="body">
+      HTML is the skeleton we're just laying out the pieces. Think of it like building the set before the show starts. Open <code>index.html</code> and add everything below:
+    </p>
+
+    <div class="cblock">
+      <div class="cblock-top">
+        <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>index.html</div>
+        <button class="c-copy" onclick="copyMe(this)">Copy</button>
+      </div>
+      <pre><span class="tg">&lt;!DOCTYPE html&gt;</span>
+<span class="tg">&lt;html</span> <span class="at">lang</span>=<span class="vl">"en"</span><span class="tg">&gt;</span>
+<span class="tg">&lt;head&gt;</span>
+  <span class="tg">&lt;meta</span> <span class="at">charset</span>=<span class="vl">"UTF-8"</span><span class="tg">/&gt;</span>
+  <span class="tg">&lt;meta</span> <span class="at">name</span>=<span class="vl">"viewport"</span> <span class="at">content</span>=<span class="vl">"width=device-width, initial-scale=1"</span><span class="tg">/&gt;</span>
+  <span class="tg">&lt;title&gt;</span>Fill the Matcha Cup 🍵<span class="tg">&lt;/title&gt;</span>
+  <span class="tg">&lt;link</span> <span class="at">rel</span>=<span class="vl">"stylesheet"</span> <span class="at">href</span>=<span class="vl">"style.css"</span><span class="tg">/&gt;</span>
+<span class="tg">&lt;/head&gt;</span>
+<span class="tg">&lt;body&gt;</span>
+
+  <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"card"</span><span class="tg">&gt;</span>
+
+    <span class="cm">&lt;!-- Title + target label --&gt;</span>
+    <span class="tg">&lt;h1&gt;</span>Fill the Matcha Cup 🍵<span class="tg">&lt;/h1&gt;</span>
+    <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"target-label"</span> <span class="at">id</span>=<span class="vl">"target-label"</span><span class="tg">&gt;</span>Fill to ...%<span class="tg">&lt;/p&gt;</span>
+
+    <span class="cm">&lt;!-- The cup --&gt;</span>
+    <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-wrap"</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup"</span> <span class="at">id</span>=<span class="vl">"cup"</span><span class="tg">&gt;</span>
+
+        <span class="cm">&lt;!-- The rising liquid --&gt;</span>
+        <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"liquid"</span> <span class="at">id</span>=<span class="vl">"liquid"</span><span class="tg">&gt;</span>
+          <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"liquid-surface"</span><span class="tg">&gt;&lt;/div&gt;</span>
+        <span class="tg">&lt;/div&gt;</span>
+
+        <span class="cm">&lt;!-- Golden target zone band --&gt;</span>
+        <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"target-zone"</span> <span class="at">id</span>=<span class="vl">"target-zone"</span><span class="tg">&gt;&lt;/div&gt;</span>
+
+        <span class="cm">&lt;!-- Kawaii face (drawn with CSS) --&gt;</span>
+        <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-face"</span><span class="tg">&gt;</span>
+          <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"eyes"</span><span class="tg">&gt;</span>
+            <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"eye"</span><span class="tg">&gt;&lt;/div&gt;</span>
+            <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"eye"</span><span class="tg">&gt;&lt;/div&gt;</span>
+          <span class="tg">&lt;/div&gt;</span>
+          <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"blush-row"</span><span class="tg">&gt;</span>
+            <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"blush"</span><span class="tg">&gt;&lt;/div&gt;</span>
+            <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"blush"</span><span class="tg">&gt;&lt;/div&gt;</span>
+          <span class="tg">&lt;/div&gt;</span>
+        <span class="tg">&lt;/div&gt;</span>
+
+        <span class="cm">&lt;!-- Cup rim (sits on top visually) --&gt;</span>
+        <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-rim"</span><span class="tg">&gt;&lt;/div&gt;</span>
+      <span class="tg">&lt;/div&gt;</span>
+    <span class="tg">&lt;/div&gt;</span>
+
+    <span class="cm">&lt;!-- Stats row --&gt;</span>
+    <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"stats"</span><span class="tg">&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"stat"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="vl">"stat-label"</span><span class="tg">&gt;</span>Current<span class="tg">&lt;/span&gt;</span>
+        <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="vl">"stat-val"</span> <span class="at">id</span>=<span class="vl">"cur-pct"</span><span class="tg">&gt;</span>0%<span class="tg">&lt;/span&gt;</span>
+      <span class="tg">&lt;/div&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"stat"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="vl">"stat-label"</span><span class="tg">&gt;</span>Target<span class="tg">&lt;/span&gt;</span>
+        <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="vl">"stat-val"</span> <span class="at">id</span>=<span class="vl">"tgt-pct"</span><span class="tg">&gt;</span>-<span class="tg">&lt;/span&gt;</span>
+      <span class="tg">&lt;/div&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"stat"</span><span class="tg">&gt;</span>
+        <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="vl">"stat-label"</span><span class="tg">&gt;</span>Best<span class="tg">&lt;/span&gt;</span>
+        <span class="tg">&lt;span</span> <span class="at">class</span>=<span class="vl">"stat-val"</span> <span class="at">id</span>=<span class="vl">"best-pct"</span><span class="tg">&gt;</span>-<span class="tg">&lt;/span&gt;</span>
+      <span class="tg">&lt;/div&gt;</span>
+    <span class="tg">&lt;/div&gt;</span>
+
+    <span class="cm">&lt;!-- The pour button --&gt;</span>
+    <span class="tg">&lt;button</span> <span class="at">class</span>=<span class="vl">"pour-btn"</span> <span class="at">id</span>=<span class="vl">"pour-btn"</span><span class="tg">&gt;</span>Hold to pour 🍵<span class="tg">&lt;/button&gt;</span>
+    <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"hint"</span><span class="tg">&gt;</span>Release to stop<span class="tg">&lt;/p&gt;</span>
+
+    <span class="cm">&lt;!-- Result message --&gt;</span>
+    <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"result"</span> <span class="at">id</span>=<span class="vl">"result"</span><span class="tg">&gt;&lt;/p&gt;</span>
+
+    <span class="cm">&lt;!-- Attempt history pills --&gt;</span>
+    <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"attempts"</span> <span class="at">id</span>=<span class="vl">"attempts"</span><span class="tg">&gt;&lt;/div&gt;</span>
+
+    <span class="cm">&lt;!-- New round button --&gt;</span>
+    <span class="tg">&lt;button</span> <span class="at">class</span>=<span class="vl">"restart-btn"</span> <span class="at">id</span>=<span class="vl">"restart-btn"</span><span class="tg">&gt;</span>↻ New round<span class="tg">&lt;/button&gt;</span>
+
+  <span class="tg">&lt;/div&gt;</span>
+
+  <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="vl">"game.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
+<span class="tg">&lt;/body&gt;</span>
+<span class="tg">&lt;/html&gt;</span></pre>
+    </div>
+
+    <div class="exp">
+      <strong>What do all those id="..." things do?</strong> The <code>id</code> attribute is like giving a name tag to an element. Later in JavaScript, we'll use <code>document.getElementById("liquid")</code> to grab that element and change it. Every element we want to update needs an id.
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">🌿</span>
+      <div class="callout-body">
+        Notice the <code>&lt;script src="game.js"&gt;</code> tag is at the <strong>bottom</strong> of the body not in the head. This is important! It means the HTML loads first, so JavaScript can find the elements it needs. If you put it in the head, it runs before the elements exist and breaks things. 🙅
+      </div>
+    </div>
+
+    <div class="check">
+      <span class="check-icon">🧾</span>
+      <div class="check-body">Checkpoint :open index.html in your browser. You'll see raw unstyled text. That's totally fine!<span>The bones are in place. Now let's make it look cute.</span></div>
+    </div>
+  </section>
+
+  <hr class="div"/>
+
+  <!-- ── SECTION 3 ── -->
+  <section id="s3">
+    <div class="eyebrow"><span class="step-dot">3</span> CSS</div>
+    <h2 class="sh">Style it with CSS</h2>
+    <p class="body">
+      Here's the fun part we're going to style a cute kawaii cup using only CSS divs. No image files needed! The secret trick: <code>overflow: hidden</code> on the cup clips the rising liquid so it stays inside.
+    </p>
+    <p class="body">Open <code>style.css</code> and add this:</p>
+
+    <div class="cblock">
+      <div class="cblock-top">
+        <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>style.css Part 1: layout &amp; cup</div>
+        <button class="c-copy" onclick="copyMe(this)">Copy</button>
+      </div>
+      <pre><span class="cm">/* ── Reset ── */</span>
+<span class="sl">*</span> { <span class="pp">box-sizing</span>: border-box; <span class="pp">margin</span>: <span class="nm">0</span>; <span class="pp">padding</span>: <span class="nm">0</span>; }
+
+<span class="sl">body</span> {
+  <span class="pp">font-family</span>: <span class="str">'Nunito'</span>, sans-serif; <span class="cm">/* swap for any Google Font you like! */</span>
+  <span class="pp">background</span>: <span class="nm">#f0f7f0</span>;
+  <span class="pp">min-height</span>: <span class="nm">100vh</span>;
+  <span class="pp">display</span>: flex;
+  <span class="pp">justify-content</span>: center;
+  <span class="pp">align-items</span>: flex-start;
+  <span class="pp">padding</span>: <span class="nm">2rem 1rem</span>;
+}
+
+<span class="cm">/* ── Main game card ── */</span>
+<span class="sl">.card</span> {
+  <span class="pp">background</span>: <span class="nm">#fff</span>;
+  <span class="pp">border-radius</span>: <span class="nm">28px</span>;
+  <span class="pp">padding</span>: <span class="nm">2rem 2rem 2.5rem</span>;
+  <span class="pp">width</span>: <span class="nm">100%</span>;
+  <span class="pp">max-width</span>: <span class="nm">360px</span>;
+  <span class="pp">display</span>: flex;
+  <span class="pp">flex-direction</span>: column;
+  <span class="pp">align-items</span>: center;
+  <span class="pp">gap</span>: <span class="nm">1rem</span>;
+  <span class="pp">text-align</span>: center;
+  <span class="pp">box-shadow</span>: <span class="nm">0 8px 40px rgba(74,156,74,.12)</span>;
+}
+
+<span class="sl">h1</span> {
+  <span class="pp">font-size</span>: <span class="nm">1.5rem</span>;
+  <span class="pp">font-weight</span>: <span class="nm">900</span>;
+  <span class="pp">color</span>: <span class="nm">#1c2b1c</span>;
+}
+
+<span class="sl">.target-label</span> {
+  <span class="pp">font-size</span>: <span class="nm">13px</span>;
+  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">background</span>: <span class="nm">#d6edd6</span>;
+  <span class="pp">color</span>: <span class="nm">#2d7a2d</span>;
+  <span class="pp">padding</span>: <span class="nm">5px 16px</span>;
+  <span class="pp">border-radius</span>: <span class="nm">999px</span>;
+}
+
+<span class="cm">/* ── Cup container ── */</span>
+<span class="sl">.cup-wrap</span> {
+  <span class="pp">position</span>: relative;
+  <span class="pp">width</span>: <span class="nm">130px</span>;
+  <span class="pp">height</span>: <span class="nm">180px</span>;
+  <span class="pp">margin</span>: <span class="nm">0.5rem 0</span>;
+}
+
+<span class="sl">.cup</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">inset</span>: <span class="nm">0</span>;
+  <span class="pp">background</span>: <span class="nm">#f2f9f0</span>;
+  <span class="pp">border</span>: <span class="nm">3px solid #a8d0a8</span>;
+  <span class="pp">border-radius</span>: <span class="nm">10px 10px 32px 32px</span>; <span class="cm">/* flat top, round bottom */</span>
+  <span class="pp">overflow</span>: hidden; <span class="cm">/* ← KEY: clips the liquid inside the cup */</span>
+}
+
+<span class="cm">/* ── Rising liquid ── */</span>
+<span class="sl">.liquid</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">bottom</span>: <span class="nm">0</span>;        <span class="cm">/* starts at the bottom */</span>
+  <span class="pp">left</span>: <span class="nm">0</span>;
+  <span class="pp">width</span>: <span class="nm">100%</span>;
+  <span class="pp">height</span>: <span class="nm">0%</span>;       <span class="cm">/* JS will increase this while button is held */</span>
+  <span class="pp">background</span>: <span class="nm">#5faa5f</span>;
+  <span class="pp">border-radius</span>: <span class="nm">0 0 29px 29px</span>;
+  <span class="pp">transition</span>: height <span class="nm">0.04s</span> linear;
+}
+
+<span class="sl">.liquid-surface</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">top</span>: <span class="nm">0</span>; <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">width</span>: <span class="nm">100%</span>; <span class="pp">height</span>: <span class="nm">7px</span>;
+  <span class="pp">background</span>: <span class="nm">rgba(160,230,160,.5)</span>;
+  <span class="pp">border-radius</span>: <span class="nm">4px 4px 0 0</span>;
+}
+
+<span class="cm">/* ── Golden target zone ── */</span>
+<span class="sl">.target-zone</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">width</span>: <span class="nm">100%</span>;
+  <span class="pp">background</span>: <span class="nm">rgba(233,168,37,.18)</span>;
+  <span class="pp">border-top</span>: <span class="nm">2px dashed #e9a825</span>;
+  <span class="pp">border-bottom</span>: <span class="nm">2px dashed #e9a825</span>;
+  <span class="pp">pointer-events</span>: none;
+  <span class="pp">z-index</span>: <span class="nm">2</span>;
+}
+
+<span class="cm">/* ── Cup rim (top strip) ── */</span>
+<span class="sl">.cup-rim</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">top</span>: <span class="nm">0</span>; <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">width</span>: <span class="nm">100%</span>; <span class="pp">height</span>: <span class="nm">14px</span>;
+  <span class="pp">background</span>: <span class="nm">#e4f2e4</span>;
+  <span class="pp">border-bottom</span>: <span class="nm">2px solid #a8d0a8</span>;
+  <span class="pp">z-index</span>: <span class="nm">4</span>; <span class="cm">/* sits above liquid */</span>
+}
+
+<span class="cm">/* ── Kawaii face (CSS-only!) ── */</span>
+<span class="sl">.cup-face</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">bottom</span>: <span class="nm">22%</span>;
+  <span class="pp">left</span>: <span class="nm">50%</span>;
+  <span class="pp">transform</span>: translateX(-50%);
+  <span class="pp">z-index</span>: <span class="nm">5</span>;
+  <span class="pp">display</span>: flex;
+  <span class="pp">flex-direction</span>: column;
+  <span class="pp">align-items</span>: center;
+  <span class="pp">gap</span>: <span class="nm">5px</span>;
+}
+<span class="sl">.eyes</span> {
+  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">14px</span>;
+}
+<span class="sl">.eye</span> {
+  <span class="pp">width</span>: <span class="nm">8px</span>; <span class="pp">height</span>: <span class="nm">8px</span>;
+  <span class="pp">background</span>: <span class="nm">#2d4a2d</span>;
+  <span class="pp">border-radius</span>: <span class="nm">50%</span>;
+  <span class="pp">position</span>: relative;
+}
+<span class="cm">/* little shine on each eye */</span>
+<span class="sl">.eye::after</span> {
+  <span class="pp">content</span>: <span class="str">''</span>;
+  <span class="pp">position</span>: absolute;
+  <span class="pp">top</span>: <span class="nm">1px</span>; <span class="pp">right</span>: <span class="nm">1px</span>;
+  <span class="pp">width</span>: <span class="nm">3px</span>; <span class="pp">height</span>: <span class="nm">3px</span>;
+  <span class="pp">background</span>: <span class="nm">#fff</span>;
+  <span class="pp">border-radius</span>: <span class="nm">50%</span>;
+}
+<span class="sl">.blush-row</span> {
+  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">28px</span>;
+  <span class="pp">margin-top</span>: <span class="nm">3px</span>;
+}
+<span class="sl">.blush</span> {
+  <span class="pp">width</span>: <span class="nm">14px</span>; <span class="pp">height</span>: <span class="nm">8px</span>;
+  <span class="pp">background</span>: <span class="nm">#f9c0cb</span>;
+  <span class="pp">border-radius</span>: <span class="nm">50%</span>;
+  <span class="pp">opacity</span>: <span class="nm">.7</span>;
+}</pre>
+    </div>
+
+    <div class="exp">
+      <strong>How does the cup trick work?</strong> The <code>.cup</code> div has <code>overflow: hidden</code>. The <code>.liquid</code> div lives inside it and its height starts at 0%. When JavaScript increases that height (say, to 60%), the liquid fills from the bottom up but anything above the cup's edges gets clipped. Simple but super effective!
+    </div>
+
+    <p class="body">Now add the stats, button, and utility styles:</p>
+
+    <div class="cblock">
+      <div class="cblock-top">
+        <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>style.css Part 2: buttons &amp; stats</div>
+        <button class="c-copy" onclick="copyMe(this)">Copy</button>
+      </div>
+      <pre><span class="cm">/* ── Stats row ── */</span>
+<span class="sl">.stats</span> {
+  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">10px</span>;
+}
+<span class="sl">.stat</span> {
+  <span class="pp">background</span>: <span class="nm">#f2faf2</span>;
+  <span class="pp">border-radius</span>: <span class="nm">12px</span>;
+  <span class="pp">padding</span>: <span class="nm">7px 15px</span>;
+  <span class="pp">text-align</span>: center;
+}
+<span class="sl">.stat-label</span> {
+  <span class="pp">display</span>: block;
+  <span class="pp">font-size</span>: <span class="nm">10px</span>;
+  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">text-transform</span>: uppercase;
+  <span class="pp">letter-spacing</span>: <span class="nm">.05em</span>;
+  <span class="pp">color</span>: <span class="nm">#6e8a6e</span>;
+}
+<span class="sl">.stat-val</span> {
+  <span class="pp">font-size</span>: <span class="nm">1.2rem</span>;
+  <span class="pp">font-weight</span>: <span class="nm">900</span>;
+  <span class="pp">color</span>: <span class="nm">#4a9c4a</span>;
+}
+
+<span class="cm">/* ── Pour button ── */</span>
+<span class="sl">.pour-btn</span> {
+  <span class="pp">width</span>: <span class="nm">210px</span>;
+  <span class="pp">padding</span>: <span class="nm">14px</span>;
+  <span class="pp">background</span>: <span class="nm">#4a9c4a</span>;
+  <span class="pp">color</span>: <span class="nm">#fff</span>;
+  <span class="pp">border</span>: none;
+  <span class="pp">border-radius</span>: <span class="nm">999px</span>;
+  <span class="pp">font-family</span>: inherit;
+  <span class="pp">font-size</span>: <span class="nm">1rem</span>;
+  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">cursor</span>: pointer;
+  <span class="pp">user-select</span>: none;
+  <span class="pp">touch-action</span>: none; <span class="cm">/* stops scroll on mobile */</span>
+  <span class="pp">box-shadow</span>: <span class="nm">0 4px 0 #2d7a2d</span>;
+  <span class="pp">transition</span>: transform <span class="nm">.08s</span>, box-shadow <span class="nm">.08s</span>;
+}
+<span class="sl">.pour-btn:active</span> {
+  <span class="pp">transform</span>: translateY(<span class="nm">3px</span>);
+  <span class="pp">box-shadow</span>: <span class="nm">0 1px 0 #2d7a2d</span>;
+}
+<span class="sl">.pour-btn:disabled</span> {
+  <span class="pp">background</span>: <span class="nm">#b0ccb0</span>;
+  <span class="pp">box-shadow</span>: <span class="nm">0 4px 0 #8aaa8a</span>;
+  <span class="pp">cursor</span>: default;
+}
+
+<span class="sl">.hint</span> { <span class="pp">font-size</span>: <span class="nm">12px</span>; <span class="pp">color</span>: <span class="nm">#6e8a6e</span>; }
+
+<span class="sl">.result</span> {
+  <span class="pp">font-size</span>: <span class="nm">1rem</span>;
+  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">min-height</span>: <span class="nm">22px</span>;
+  <span class="pp">color</span>: <span class="nm">#4a9c4a</span>;
+}
+
+<span class="cm">/* ── Attempt history ── */</span>
+<span class="sl">.attempts</span> {
+  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">6px</span>; <span class="pp">flex-wrap</span>: wrap;
+  <span class="pp">justify-content</span>: center; <span class="pp">min-height</span>: <span class="nm">26px</span>;
+}
+<span class="sl">.attempt</span> {
+  <span class="pp">font-size</span>: <span class="nm">12px</span>; <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">padding</span>: <span class="nm">3px 12px</span>;
+  <span class="pp">border-radius</span>: <span class="nm">999px</span>;
+}
+<span class="sl">.attempt.win</span>  { <span class="pp">background</span>: <span class="nm">#d6edd6</span>; <span class="pp">color</span>: <span class="nm">#2d7a2d</span>; }
+<span class="sl">.attempt.lose</span> { <span class="pp">background</span>: <span class="nm">#fde8e8</span>; <span class="pp">color</span>: <span class="nm">#c0392b</span>; }
+
+<span class="cm">/* ── Restart button ── */</span>
+<span class="sl">.restart-btn</span> {
+  <span class="pp">background</span>: transparent;
+  <span class="pp">border</span>: <span class="nm">2px solid #cce5cc</span>;
+  <span class="pp">border-radius</span>: <span class="nm">999px</span>;
+  <span class="pp">padding</span>: <span class="nm">6px 20px</span>;
+  <span class="pp">font-family</span>: inherit;
+  <span class="pp">font-size</span>: <span class="nm">13px</span>;
+  <span class="pp">font-weight</span>: <span class="nm">700</span>;
+  <span class="pp">color</span>: <span class="nm">#6e8a6e</span>;
+  <span class="pp">cursor</span>: pointer;
+}
+<span class="sl">.restart-btn:hover</span> { <span class="pp">border-color</span>: <span class="nm">#4a9c4a</span>; <span class="pp">color</span>: <span class="nm">#4a9c4a</span>; }</pre>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>Want a Google Font?</strong> Add this inside your <code>&lt;head&gt;</code> before the CSS link: <code>&lt;link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&amp;display=swap" rel="stylesheet"&gt;</code>. Nunito gives a round, friendly look that's very matcha-coded.
+      </div>
+    </div>
+
+    <div class="check">
+      <span class="check-icon">🎨</span>
+      <div class="check-body">Checkpoint: refresh the browser. You should see a cute green card with a white cup, some stats, and a green button!<span>The cup will be empty for now we bring it to life in the next step.</span></div>
+    </div>
+  </section>
+
+  <hr class="div"/>
+
+  <!-- ── SECTION 4 ── -->
+  <section id="s4">
+    <div class="eyebrow"><span class="step-dot">4</span> JavaScript</div>
+    <h2 class="sh">Make it pour ,the JavaScript engine</h2>
+    <p class="body">
+      Here's the magic. When the player holds the button, we use <code>setInterval</code> to run a little function every 30 milliseconds that bumps the liquid level up. When they let go, we call <code>clearInterval</code> to stop it. That's literally the whole mechanic!
+    </p>
+    <p class="body">Open <code>game.js</code> and start with the setup:</p>
+
+    <div class="cblock">
+      <div class="cblock-top">
+        <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>game.js Part 1: grab elements &amp; state</div>
+        <button class="c-copy" onclick="copyMe(this)">Copy</button>
+      </div>
+      <pre><span class="cm">// ── Step 1: Grab all the elements we need ──────────────────</span>
+<span class="cm">// document.getElementById() finds an element by its id=""</span>
+
+<span class="kw">const</span> liquid    = document.<span class="fn">getElementById</span>(<span class="str">'liquid'</span>);
+<span class="kw">const</span> pourBtn   = document.<span class="fn">getElementById</span>(<span class="str">'pour-btn'</span>);
+<span class="kw">const</span> curPctEl  = document.<span class="fn">getElementById</span>(<span class="str">'cur-pct'</span>);
+<span class="kw">const</span> tgtPctEl  = document.<span class="fn">getElementById</span>(<span class="str">'tgt-pct'</span>);
+<span class="kw">const</span> bestEl    = document.<span class="fn">getElementById</span>(<span class="str">'best-pct'</span>);
+<span class="kw">const</span> resultEl  = document.<span class="fn">getElementById</span>(<span class="str">'result'</span>);
+<span class="kw">const</span> targetZone = document.<span class="fn">getElementById</span>(<span class="str">'target-zone'</span>);
+<span class="kw">const</span> labelEl   = document.<span class="fn">getElementById</span>(<span class="str">'target-label'</span>);
+<span class="kw">const</span> attemptsEl = document.<span class="fn">getElementById</span>(<span class="str">'attempts'</span>);
+<span class="kw">const</span> restartBtn = document.<span class="fn">getElementById</span>(<span class="str">'restart-btn'</span>);
+
+<span class="cm">// ── Step 2: Game state variables ───────────────────────────</span>
+<span class="cm">// These track what's happening in the current round</span>
+
+<span class="kw">let</span> level    = <span class="nm">0</span>;      <span class="cm">// current fill % (0 to 100)</span>
+<span class="kw">let</span> pouring  = <span class="kw">false</span>; <span class="cm">// is the player holding the button?</span>
+<span class="kw">let</span> gameOver = <span class="kw">false</span>; <span class="cm">// has this round ended?</span>
+<span class="kw">let</span> interval = <span class="kw">null</span>;  <span class="cm">// stores our setInterval so we can stop it</span>
+<span class="kw">let</span> pourRate  = <span class="nm">0.18</span>; <span class="cm">// how fast the liquid rises per tick</span>
+
+<span class="kw">let</span> targetLow, targetHigh;     <span class="cm">// the target range for this round</span>
+<span class="kw">let</span> bestScore = <span class="kw">null</span>;         <span class="cm">// best distance from target center ever</span>
+<span class="kw">let</span> attempts  = [];            <span class="cm">// list of recent attempt results</span>
+
+<span class="cm">// ── Step 3: Pick a random target range ─────────────────────</span>
+<span class="kw">function</span> <span class="fn">pickTarget</span>() {
+  <span class="cm">// Each entry is [low%, high%] : a 5% window</span>
+  <span class="kw">const</span> ranges = [
+    [<span class="nm">30</span>, <span class="nm">35</span>], [<span class="nm">40</span>, <span class="nm">45</span>], [<span class="nm">45</span>, <span class="nm">50</span>],
+    [<span class="nm">50</span>, <span class="nm">55</span>], [<span class="nm">60</span>, <span class="nm">65</span>], [<span class="nm">70</span>, <span class="nm">75</span>]
+  ];
+  <span class="kw">const</span> r = ranges[Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * ranges.length)];
+  targetLow  = r[<span class="nm">0</span>];
+  targetHigh = r[<span class="nm">1</span>];
+}
+
+<span class="cm">// ── Step 4: Draw the golden zone band in the cup ───────────</span>
+<span class="kw">function</span> <span class="fn">drawTargetZone</span>() {
+  <span class="kw">const</span> cupH  = <span class="nm">180</span>;  <span class="cm">// must match .cup-wrap height in CSS (px)</span>
+  <span class="kw">const</span> rimH  = <span class="nm">14</span>;   <span class="cm">// must match .cup-rim height in CSS (px)</span>
+  <span class="kw">const</span> inner = cupH - rimH;
+
+  <span class="cm">// Convert % to pixels from the bottom</span>
+  <span class="kw">const</span> bottomPx = inner * (targetLow  / <span class="nm">100</span>);
+  <span class="kw">const</span> topPx    = inner * (targetHigh / <span class="nm">100</span>);
+
+  targetZone.style.bottom = (rimH + bottomPx) + <span class="str">'px'</span>;
+  targetZone.style.height = (topPx - bottomPx) + <span class="str">'px'</span>;
+}
+
+<span class="cm">// ── Step 5: Initialize (or re-initialize) a round ──────────</span>
+<span class="kw">function</span> <span class="fn">initRound</span>() {
+  <span class="fn">pickTarget</span>();
+
+  level    = <span class="nm">0</span>;
+  pouring  = <span class="kw">false</span>;
+  gameOver = <span class="kw">false</span>;
+  pourRate = <span class="nm">0.14</span> + Math.<span class="fn">random</span>() * <span class="nm">0.10</span>; <span class="cm">// small random speed</span>
+
+  liquid.style.height   = <span class="str">'0%'</span>;
+  curPctEl.textContent  = <span class="str">'0%'</span>;
+  resultEl.textContent  = <span class="str">''</span>;
+  pourBtn.disabled      = <span class="kw">false</span>;
+  pourBtn.textContent   = <span class="str">'Hold to pour 🍵'</span>;
+  tgtPctEl.textContent  = targetLow + <span class="str">'–'</span> + targetHigh + <span class="str">'%'</span>;
+  labelEl.textContent   = <span class="str">'Fill to '</span> + targetLow + <span class="str">'% – '</span> + targetHigh + <span class="str">'%'</span>;
+
+  <span class="fn">drawTargetZone</span>();
+}
+
+<span class="cm">// ── Step 6: Update the cup display each tick ───────────────</span>
+<span class="kw">function</span> <span class="fn">updateDisplay</span>() {
+  <span class="kw">const</span> h = Math.<span class="fn">min</span>(level, <span class="nm">100</span>); <span class="cm">// cap at 100%</span>
+  liquid.style.height    = h + <span class="str">'%'</span>;
+  curPctEl.textContent   = Math.<span class="fn">round</span>(h) + <span class="str">'%'</span>;
+}
+
+<span class="cm">// ── Step 7: Start pouring ──────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">startPour</span>() {
+  <span class="kw">if</span> (gameOver || pouring) <span class="kw">return</span>; <span class="cm">// don't start twice</span>
+  pouring = <span class="kw">true</span>;
+
+  <span class="cm">// setInterval runs a function repeatedly on a timer</span>
+  <span class="cm">// here: every 30 milliseconds, bump the level up</span>
+  interval = <span class="fn">setInterval</span>(() => {
+    level += pourRate;
+    <span class="kw">if</span> (level >= <span class="nm">100</span>) {
+      level = <span class="nm">100</span>;
+      <span class="fn">stopPour</span>();   <span class="cm">// auto-stop if cup overflows</span>
+    } <span class="kw">else</span> {
+      <span class="fn">updateDisplay</span>();
+    }
+  }, <span class="nm">30</span>);
+}
+
+<span class="cm">// ── Step 8: Stop pouring ───────────────────────────────────</span>
+<span class="kw">function</span> <span class="fn">stopPour</span>() {
+  <span class="kw">if</span> (!pouring) <span class="kw">return</span>;
+  pouring = <span class="kw">false</span>;
+  <span class="fn">clearInterval</span>(interval);  <span class="cm">// stop the timer!</span>
+  <span class="fn">updateDisplay</span>();
+  <span class="kw">if</span> (!gameOver) <span class="fn">endRound</span>();
+}
+
+<span class="cm">// ── Step 9: Attach events to the button ────────────────────</span>
+<span class="cm">// mousedown = mouse button pressed down (desktop)</span>
+pourBtn.<span class="fn">addEventListener</span>(<span class="str">'mousedown'</span>, startPour);
+
+<span class="cm">// touchstart = finger touches screen (mobile)</span>
+pourBtn.<span class="fn">addEventListener</span>(<span class="str">'touchstart'</span>, (e) => {
+  e.<span class="fn">preventDefault</span>(); <span class="cm">// stops mobile from firing mousedown twice</span>
+  <span class="fn">startPour</span>();
+});
+
+<span class="cm">// Listen on the whole document so releasing anywhere stops the pour</span>
+document.<span class="fn">addEventListener</span>(<span class="str">'mouseup'</span>,  () => { <span class="kw">if</span> (pouring) <span class="fn">stopPour</span>(); });
+document.<span class="fn">addEventListener</span>(<span class="str">'touchend'</span>, () => { <span class="kw">if</span> (pouring) <span class="fn">stopPour</span>(); });
+
+<span class="cm">// Restart button</span>
+restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</span>, initRound);</pre>
+    </div>
+
+    <div class="exp">
+      <strong>Why <code>document.addEventListener('mouseup')</code> and not <code>pourBtn.addEventListener('mouseup')</code>?</strong> If you attach mouseup to the button, releasing the mouse while the cursor has drifted slightly off the button won't stop the pour the liquid just keeps rising forever! Attaching it to <code>document</code> catches the release no matter where the mouse is. Trust me on this one. 😅
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">💡</span>
+      <div class="callout-body">
+        <strong>The speed randomisation trick</strong> - <code>pourRate = 0.14 + Math.random() * 0.10</code>  means every round pours at a slightly different speed. Players can't just memorize a timing. It makes the game way more replayable for basically zero extra code.
+      </div>
+    </div>
+  </section>
+
+  <hr class="div"/>
+
+  <!-- ── SECTION 5 ── -->
+  <section id="s5">
+    <div class="eyebrow"><span class="step-dot">5</span> Win / Lose</div>
+    <h2 class="sh">Win/lose detection + score tracking</h2>
+    <p class="body">
+      Now let's write <code>endRound</code> the function that checks whether the player nailed it, shows feedback, and records their attempt. Add this to the bottom of <code>game.js</code>:
+    </p>
+
+    <div class="cblock">
+      <div class="cblock-top">
+        <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>game.js Part 2: endRound &amp; history</div>
+        <button class="c-copy" onclick="copyMe(this)">Copy</button>
+      </div>
+      <pre><span class="cm">// ── endRound: called when the player releases the button ───</span>
+<span class="kw">function</span> <span class="fn">endRound</span>() {
+  gameOver = <span class="kw">true</span>;
+  pourBtn.disabled    = <span class="kw">true</span>;
+  pourBtn.textContent = <span class="str">'Done! ✅'</span>;
+
+  <span class="kw">const</span> rounded = Math.<span class="fn">round</span>(level);
+
+  <span class="cm">// Did they land inside the target range?</span>
+  <span class="kw">const</span> win = rounded >= targetLow && rounded <= targetHigh;
+
+  <span class="cm">// How far from the center of the zone? (used for best score)</span>
+  <span class="kw">const</span> center    = (targetLow + targetHigh) / <span class="nm">2</span>;
+  <span class="kw">const</span> distance  = Math.<span class="fn">abs</span>(rounded - center);
+
+  <span class="cm">// ── Show feedback message ──</span>
+  <span class="kw">if</span> (win) {
+    resultEl.textContent = <span class="str">'🍵 Perfect pour!'</span>;
+    resultEl.style.color = <span class="str">'#2d7a2d'</span>;
+  } <span class="kw">else if</span> (rounded < targetLow) {
+    <span class="kw">const</span> off = targetLow - rounded;
+    resultEl.textContent = off <= <span class="nm">5</span>
+      ? <span class="str">'So close just a tiny drop more! 😅'</span>
+      : <span class="str">'Too little! Hold a bit longer. 💧'</span>;
+    resultEl.style.color = <span class="str">'#c0392b'</span>;
+  } <span class="kw">else</span> {
+    <span class="kw">const</span> off = rounded - targetHigh;
+    resultEl.textContent = off <= <span class="nm">5</span>
+      ? <span class="str">'Almost! Release a tiny bit sooner! ⏱️'</span>
+      : <span class="str">'Too much! Release earlier next time. 😱'</span>;
+    resultEl.style.color = <span class="str">'#c0392b'</span>;
+  }
+
+  <span class="cm">// ── Update best score ──</span>
+  <span class="cm">// We store the closest distance  smaller = better</span>
+  <span class="kw">if</span> (bestScore === <span class="kw">null</span> || distance < bestScore) {
+    bestScore = distance;
+    bestEl.textContent = rounded + <span class="str">'%'</span>;
+  }
+
+  <span class="cm">// ── Add to attempt history ──</span>
+  attempts.<span class="fn">unshift</span>({ pct: rounded, win }); <span class="cm">// add to front</span>
+  <span class="kw">if</span> (attempts.length > <span class="nm">5</span>) attempts.<span class="fn">pop</span>(); <span class="cm">// keep only last 5</span>
+  <span class="fn">renderAttempts</span>();
+}
+
+<span class="cm">// ── Render the colored attempt pills ───────────────────────</span>
+<span class="kw">function</span> <span class="fn">renderAttempts</span>() {
+  attemptsEl.innerHTML = <span class="str">''</span>; <span class="cm">// clear old pills first</span>
+
+  attempts.<span class="fn">forEach</span>(a => {
+    <span class="kw">const</span> pill = document.<span class="fn">createElement</span>(<span class="str">'span'</span>);
+    pill.className   = <span class="str">'attempt '</span> + (a.win ? <span class="str">'win'</span> : <span class="str">'lose'</span>);
+    pill.textContent = a.pct + <span class="str">'%'</span>;
+    attemptsEl.<span class="fn">appendChild</span>(pill);
+  });
+}
+
+<span class="cm">// ── Kick off the very first round! ─────────────────────────</span>
+<span class="fn">initRound</span>();</pre>
+    </div>
+
+    <div class="exp">
+      <strong>Why "distance from center" for best score?</strong> Instead of storing the highest percentage, we store how close the player got to the <em>middle</em> of the target zone. A 47% pour when the target is 45–50% (center: 47.5, distance: 0.5) beats a lucky 50% (distance: 2.5). This rewards precision over luck. ✨
+    </div>
+
+    <div class="check">
+      <span class="check-icon">🎮</span>
+      <div class="check-body">Checkpoint save everything and refresh. Your game is fully playable!<span>Hold the button, watch the liquid rise, release at the golden zone. Green pill = win, red pill = miss.</span></div>
+    </div>
+  </section>
+
+  <hr class="div"/>
+
+  <!-- ── SECTION 6 ── -->
+  <section id="s6">
+    <div class="eyebrow"><span class="step-dot">6</span> Stretch Goals</div>
+    <h2 class="sh">Polish ideas &amp; what to try next</h2>
+    <p class="body">
+      Your game works! Here are ideas to level it up  from easy one-liners to fun challenges:
+    </p>
+
+    <div class="stretch-grid">
+      <div class="sc"><div class="ic">😊</div><h4>Animated cup face</h4><p>Swap the CSS face for an emoji based on the liquid level  <code>😶</code> empty, <code>🙂</code> mid, <code>😱</code> overflowing.</p></div>
+      <div class="sc"><div class="ic">🔥</div><h4>Win streak counter</h4><p>Count consecutive wins. Show "3 in a row! 🔥" and reset to 0 on any miss.</p></div>
+      <div class="sc"><div class="ic">⚡</div><h4>Narrowing target</h4><p>Start the zone at 10%. Narrow it by 1% each win. The game naturally gets harder!</p></div>
+      <div class="sc"><div class="ic">💾</div><h4>Save high score</h4><p>Use <code>localStorage.setItem('best', score)</code> to persist the best score between sessions.</p></div>
+      <div class="sc"><div class="ic">🎵</div><h4>Sound effects</h4><p>Use the Web Audio API to play a pour sound and a "ding" on win  no audio files needed.</p></div>
+      <div class="sc"><div class="ic">📱</div><h4>Share button</h4><p>Add a "Share my score" button using the <code>navigator.share()</code> API on mobile.</p></div>
+    </div>
+
+    <div class="callout yay">
+      <span class="callout-icon">🎉</span>
+      <div class="callout-body">
+        <strong>You did it!</strong> You just built a fully playable browser game from scratch  no tutorials, no frameworks, just HTML, CSS, and vanilla JavaScript. Share it on <strong>Codédex Builds</strong>, drop your link below, and challenge the community to beat your best score!
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">🚀</span>
+      <div class="callout-body">
+        <strong>Deploy it for free in 10 seconds:</strong> drag your whole <code>matcha-game/</code> folder onto <a href="https://netlify.com" class="link" target="_blank" rel="noopener">Netlify Drop</a>. You get a live shareable URL instantly, no account needed.
+      </div>
+    </div>
+  </section>
+
+  <!-- FINALE -->
+  <div class="finale">
+    <div style="font-size:3rem;margin-bottom:.7rem">🍵</div>
+    <h2>You shipped it!</h2>
+    <p>Built with HTML, CSS, and vanilla JavaScript. No frameworks, no libraries, just you and the craft.</p>
+    <div class="finale-tags">
+      <span class="ftag">HTML</span>
+      <span class="ftag">CSS</span>
+      <span class="ftag">JavaScript</span>
+      <span class="ftag">setInterval</span>
+      <span class="ftag">DOM manipulation</span>
+      <span class="ftag">Event listeners</span>
+      <span class="ftag">Game state</span>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Written for the Codédex Monthly Challenge &nbsp;·&nbsp; <strong style="color:var(--g4)">Build a X with Y</strong></p>
+  <p style="margin-top:5px">Made with 🍵 and a lot of precision &nbsp;·&nbsp; Good luck out there!</p>
+</footer>
+
+<!-- ══ LIVE DEMO GAME SCRIPT ══ -->
+<script>
+(function(){
+  let level=0,pouring=false,gameOver=false,pourRate=.18;
+  let targetLow,targetHigh,interval=null,bestScore=null,attempts=[];
+
+  const liq    = document.getElementById('dc-liq');
+  const btn    = document.getElementById('dc-btn');
+  const curEl  = document.getElementById('dc-cur');
+  const tgtEl  = document.getElementById('dc-tgt');
+  const bestEl2= document.getElementById('dc-best');
+  const resEl  = document.getElementById('dc-result');
+  const band   = document.getElementById('dc-band');
+  const badge  = document.getElementById('dc-badge');
+  const attEl  = document.getElementById('dc-attempts');
+  const mascot = document.getElementById('dc-mascot');
+  const restart= document.getElementById('dc-restart');
+  const smile  = document.getElementById('dc-smile');
+
+  function pickT(){
+    const rs=[[30,35],[40,45],[45,50],[50,55],[60,65],[70,75]];
+    const r=rs[Math.floor(Math.random()*rs.length)];
+    targetLow=r[0];targetHigh=r[1];
+  }
+  function drawBand(){
+    // cup inner area: total 150px, rim ~12px at top, bottom curve ~14px
+    const inner=124; // usable px
+    const bPx=inner*(targetLow/100);
+    const tPx=inner*(targetHigh/100);
+    band.style.bottom=(14+bPx)+'px';
+    band.style.height=(tPx-bPx)+'px';
+    band.style.left='12px';band.style.right='12px';
+    band.style.position='absolute';
+  }
+  function init(){
+    pickT();
+    level=0;pouring=false;gameOver=false;
+    pourRate=.13+Math.random()*.10;
+    liq.style.height='0%';
+    curEl.textContent='0%';
+    resEl.textContent='';
+    btn.disabled=false;btn.textContent='Hold to pour 🍵';
+    mascot.textContent='🍵';
+    tgtEl.textContent=targetLow+'–'+targetHigh+'%';
+    badge.textContent='Fill to '+targetLow+'% – '+targetHigh+'%';
+    drawBand();
+    if(smile)smile.setAttribute('d','M 42 125 Q 55 133 68 125');
+  }
+  function go(){
+    if(gameOver||pouring)return;
+    pouring=true;
+    interval=setInterval(()=>{
+      level+=pourRate;
+      if(level>=100){level=100;stop();}
+      else{upd();}
+      const pct=Math.round(Math.min(level,100));
+      mascot.textContent=pct>80?'😱':pct>50?'😅':'🫗';
+    },30);
+  }
+  function upd(){
+    const h=Math.min(level,100);
+    liq.style.height=h+'%';
+    curEl.textContent=Math.round(h)+'%';
+  }
+  function stop(){
+    if(!pouring)return;
+    pouring=false;clearInterval(interval);upd();
+    if(!gameOver)end();
+  }
+  function end(){
+    gameOver=true;btn.disabled=true;btn.textContent='Done! ✅';
+    const r=Math.round(level);
+    const win=r>=targetLow&&r<=targetHigh;
+    if(win){resEl.textContent='🍵 Perfect!';resEl.style.color='#2d7a2d';mascot.textContent='🥳';if(smile)smile.setAttribute('d','M 40 122 Q 55 136 70 122');}
+    else if(r<targetLow){resEl.textContent='↑ A bit more!';resEl.style.color='#c0392b';mascot.textContent='😔';if(smile)smile.setAttribute('d','M 42 130 Q 55 124 68 130');}
+    else{resEl.textContent='↓ Too much!';resEl.style.color='#c0392b';mascot.textContent='😅';if(smile)smile.setAttribute('d','M 42 130 Q 55 124 68 130');}
+    const d=Math.abs(r-(targetLow+targetHigh)/2);
+    if(bestScore===null||d<bestScore){bestScore=d;bestEl2.textContent=r+'%';}
+    attempts.unshift({pct:r,win});
+    if(attempts.length>5)attempts.pop();
+    attEl.innerHTML='';
+    attempts.forEach(a=>{const p=document.createElement('span');p.className='ap '+(a.win?'win':'lose');p.textContent=a.pct+'%';attEl.appendChild(p);});
+  }
+  btn.addEventListener('mousedown',go);
+  btn.addEventListener('touchstart',e=>{e.preventDefault();go();});
+  document.addEventListener('mouseup',()=>{if(pouring)stop();});
+  document.addEventListener('touchend',()=>{if(pouring)stop();});
+  restart.addEventListener('click',init);
+  init();
+})();
+</script>
+
+<script>
+function copyMe(btn){
+  const pre=btn.closest('.cblock').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(()=>{
+    btn.textContent='Copied!';
+    setTimeout(()=>{btn.textContent='Copy';},1800);
+  });
+}
+</script>
+</body>
+</html>
