@@ -27,8 +27,8 @@ Every pour is slightly different: the target changes, and so does the pour speed
 
 ```
             ╭───────────────╮
-            │   ╭◠╮   ╭◠╮   │   ← kawaii face
-            │   ⌒ ⌒ ⌒ ⌒    │
+            │   ╭◠╮   ╭◠╮  │   ← kawaii face
+            │   ⌒ ⌒ ⌒ ⌒  │
             │░░░░░░░░░░░░░░░│   ← gold "perfect pour" zone
             │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│   ← rising matcha
             │▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓│
