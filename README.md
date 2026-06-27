@@ -12,8 +12,9 @@
 </p>
 
 <p align="center">
-  <img width="420" alt="Fill the Matcha Cup gameplay" src="[https://tanishaf28.github.io/Matcha-Game/]">
-  <br>
+  <a href="https://tanishaf28.github.io/Matcha-Game/">
+    🎮 Play "Master Matcha: Fill the Cup"
+  </a>
 </p>
 
 ---
