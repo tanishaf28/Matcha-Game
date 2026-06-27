@@ -12,9 +12,8 @@
 </p>
 
 <p align="center">
-  <img width="420" alt="Fill the Matcha Cup gameplay" src="https://github.com/user-attachments/assets/placeholder-matcha-cup.png">
+  <img width="420" alt="Fill the Matcha Cup gameplay" src="[https://tanishaf28.github.io/Matcha-Game/]">
   <br>
-  <sub>✨ swap in a real screenshot or GIF here : see <a href="#-screenshot">Screenshot</a> ✨</sub>
 </p>
 
 ---
@@ -94,9 +93,6 @@ This repo doubles as a **beginner-friendly tutorial**. [`tutorial.md`](tutorial.
 
 There's also an extended, fully-annotated walkthrough in [`matcha-cup-tutorial.html`](matcha-cup-tutorial.html).
 
-## 📸 Screenshot
-
-> Replace this section with an actual screenshot or short GIF of a winning pour : drag an image into a GitHub issue/PR to get a hosted URL, then swap the placeholder at the top of this README.
 
 ## 🍃 License
 
