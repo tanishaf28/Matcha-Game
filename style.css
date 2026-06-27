@@ -1,61 +1,166 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* ── Japanese-café palette ── */
+:root {
+  --cream:       #FBF3E7;
+  --card-bg:     #FFF9EF;
+  --cup-bg:      #FFF3DC;
+  --matcha:      #7AA874;
+  --matcha-dark: #567D46;
+  --cup-edge:    #8A6E4C;
+  --sakura:      #F8D8E8;
+  --sakura-deep: #E8A9C4;
+  --gold:        #E6C57F;
+  --gold-deep:   #C99A3E;
+  --ink:         #4A3F30;
+  --text-soft:   #8C7F68;
+}
+
 body {
-  font-family: 'Baloo 2', 'Nunito', sans-serif;
-  background: linear-gradient(160deg, #ffe3f1 0%, #e8f8ec 55%, #e3f0ff 100%);
+  font-family: 'Nunito', sans-serif;
+  /* A hand-drawn matcha pattern tiled under the warm gradient — gives the
+     space outside the card some texture instead of a flat color */
+  background-image:
+    url('matcha-pattern.svg'),
+    linear-gradient(160deg, var(--cream) 0%, #F3E8D6 45%, #FBEAE2 100%);
+  background-repeat: repeat, no-repeat;
+  background-size: 220px 220px, cover;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: flex-start;
   padding: 2rem 1rem;
+  position: relative;
+  overflow-x: hidden;
+}
+/* A soft warm glow behind the card, instead of a flat gradient */
+body::before {
+  content: '';
+  position: fixed;
+  top: 38%; left: 50%;
+  width: 560px; height: 560px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(230, 197, 127, .25), transparent 70%);
+  pointer-events: none;
 }
 
 /* ── Main game card ── */
 .card {
-  background: #fffdfb;
-  border: 3px solid #ffd3ea;
+  position: relative;
+  z-index: 1;
+  background: var(--card-bg);
+  border: 1px solid #F1E8D8;
   border-radius: 32px;
-  padding: 2rem 2rem 2.5rem;
+  padding: 2.2rem 2rem 2.6rem;
   width: 100%;
-  max-width: 360px;
+  max-width: 420px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 1rem;
   text-align: center;
-  box-shadow: 0 10px 0 #ffe3f1, 0 14px 40px rgba(255,154,203,.25);
+  box-shadow: 0 10px 0 #F4EBDB, 0 18px 40px rgba(140, 120, 80, .18);
 }
 
 h1 {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #4a3b6b;
+  font-family: 'Mochiy Pop One', cursive;
+  font-size: 1.6rem;
+  font-weight: 400;
+  background: linear-gradient(90deg, var(--matcha-dark), var(--gold-deep), var(--sakura-deep), var(--matcha-dark));
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer-text 7s linear infinite;
 }
 
 .target-label {
   font-size: 13px;
-  font-weight: 700;
-  background: #ffe0ee;
-  color: #d6588f;
-  padding: 5px 16px;
+  font-weight: 800;
+  background: #F7E9C9;
+  color: #8A6A2A;
+  padding: 6px 18px;
   border-radius: 999px;
 }
 
 /* ── Cup container ── */
 .cup-wrap {
   position: relative;
-  width: 130px;
-  height: 180px;
-  margin: 0.5rem 0;
+  width: 160px;
+  height: 170px;
+  margin: 0.75rem 0;
+  animation: idle-bob 4s ease-in-out infinite;
 }
+
+/* Steam puffs rising above the rim */
+.steam {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 6px;
+  z-index: 6;
+  pointer-events: none;
+}
+.steam span {
+  width: 4px;
+  height: 22px;
+  background: linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.7));
+  border-radius: 50%;
+  opacity: 0;
+  animation: steam-rise 3s ease-in-out infinite;
+}
+.steam span:nth-child(2) { height: 26px; animation-delay: .6s; }
+.steam span:nth-child(3) { animation-delay: 1.2s; }
 
 .cup {
   position: absolute;
   inset: 0;
-  background: #fdf6fa;
-  border: 3px solid #ffc2e0;
-  border-radius: 10px 10px 32px 32px; /* flat top, round bottom */
+  z-index: 1;
+  background: var(--cup-bg);
+  border: 4px solid var(--cup-edge); /* bold, sticker-style outline */
+  border-radius: 28px 28px 48px 48px; /* a stout, rounded mug — not a tall jar */
   overflow: hidden; /* ← KEY: clips the liquid inside the cup */
+}
+
+/* Glossy ceramic highlight */
+.cup::before {
+  content: '';
+  position: absolute;
+  top: 10%; left: 12%;
+  width: 16%; height: 45%;
+  background: linear-gradient(180deg, rgba(255,255,255,.6), rgba(255,255,255,0));
+  border-radius: 50%;
+  transform: rotate(8deg);
+  z-index: 7;
+  pointer-events: none;
+}
+
+/* Mug handle — a simple ring attached to the body */
+.cup-handle {
+  position: absolute;
+  top: 40%;
+  right: -19px;
+  width: 26px;
+  height: 48px;
+  border: 5px solid var(--cup-edge);
+  border-left: none;
+  border-radius: 0 30px 30px 0;
+  background: var(--card-bg);
+  z-index: 0;
+}
+
+/* Gentle wobble while pouring (class toggled by game.js) */
+.cup.pouring {
+  animation: liquid-wobble .5s ease-in-out infinite;
+  transform-origin: 50% 100%;
+}
+
+/* Glows gold the moment the pour enters the winning window */
+.cup.in-zone {
+  box-shadow: 0 0 0 4px rgba(230, 197, 127, .5), 0 0 18px rgba(230, 197, 127, .55);
+  transition: box-shadow .15s ease;
 }
 
 /* ── Rising liquid ── */
@@ -64,28 +169,39 @@ h1 {
   bottom: 0;        /* starts at the bottom */
   left: 0;
   width: 100%;
-  height: 0%;       /* JS will increase this while button is held */
-  background: #5faa5f;
-  border-radius: 0 0 29px 29px;
+  height: 0%;        /* JS will increase this while button is held */
+  background: linear-gradient(180deg, #8FC183, var(--matcha));
+  border-radius: 0 0 44px 44px;
   transition: height 0.04s linear;
 }
 
 .liquid-surface {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 7px;
-  background: rgba(160,230,160,.5);
+  background: rgba(190, 230, 170, .5);
   border-radius: 4px 4px 0 0;
+}
+.cup.pouring .liquid-surface {
+  animation: ripple .4s ease-in-out infinite;
 }
 
 /* ── Target line (sparkly!) ── */
+/* A single dashed line through the center of the band — clearer than two
+   separate borders, which never quite read as "the same line" */
 .target-zone {
   position: absolute;
   left: 0; width: 100%;
-  background: rgba(255,200,90,.22);
-  border-top: 2px dashed #ffb347;
-  border-bottom: 2px dashed #ffb347;
+  background: rgba(230, 197, 127, .2);
   pointer-events: none;
   z-index: 2;
+  animation: zone-glow 2.4s ease-in-out infinite;
+}
+.target-zone::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%; width: 100%;
+  border-top: 2px dashed var(--gold-deep);
+  transform: translateY(-1px);
 }
 .target-zone::after {
   content: '✨';
@@ -99,8 +215,8 @@ h1 {
 .cup-rim {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 14px;
-  background: #ffeaf4;
-  border-bottom: 2px solid #ffc2e0;
+  background: #F2EBDA;
+  border-bottom: 2px solid var(--cup-edge);
   z-index: 4; /* sits above liquid */
 }
 
@@ -121,7 +237,7 @@ h1 {
 }
 .eye {
   width: 9px; height: 9px;
-  background: #4a3b6b;
+  background: var(--ink);
   border-radius: 50%;
   position: relative;
 }
@@ -134,23 +250,32 @@ h1 {
   background: #fff;
   border-radius: 50%;
 }
+.mouth {
+  width: 10px; height: 5px;
+  border-bottom: 2px solid var(--ink);
+  border-radius: 0 0 10px 10px;
+  margin-top: 2px;
+}
 .blush-row {
   display: flex; gap: 28px;
   margin-top: 3px;
 }
 .blush {
   width: 14px; height: 8px;
-  background: #ff9ec4;
+  background: var(--sakura-deep);
   border-radius: 50%;
-  opacity: .8;
+  opacity: .75;
+  animation: blush-pulse 6s ease-in-out infinite;
 }
+.blush:nth-child(2) { animation-delay: .15s; }
+
 .stats {
   display: flex; gap: 10px;
 }
 .stat {
-  background: #fff0f7;
+  background: #EEF4E8;
   border-radius: 14px;
-  padding: 7px 15px;
+  padding: 8px 16px;
   text-align: center;
 }
 .stat-label {
@@ -159,49 +284,66 @@ h1 {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .05em;
-  color: #b88aa8;
+  color: #8B9C7E;
 }
 .stat-val {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #d6588f;
+  color: var(--matcha-dark);
 }
 
 /* ── Pour button ── */
 .pour-btn {
-  width: 210px;
-  padding: 14px;
-  background: linear-gradient(180deg, #ffb6d9, #ff8fc4);
-  color: #fff;
+  width: 230px;
+  padding: 16px;
+  background: linear-gradient(180deg, #8FC183, #6FA563);
+  color: #FFFDF8;
   border: none;
   border-radius: 999px;
   font-family: inherit;
-  font-size: 1rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   cursor: pointer;
   user-select: none;
   touch-action: none; /* stops scroll on mobile */
-  box-shadow: 0 4px 0 #e25a9c;
-  transition: transform .08s, box-shadow .08s;
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.35),
+    0 6px 0 #4F7A45,
+    0 10px 22px rgba(86,125,70,.35);
+  transition: transform .12s ease, box-shadow .12s ease;
 }
-.pour-btn:active {
-  transform: translateY(3px);
-  box-shadow: 0 1px 0 #e25a9c;
+.pour-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 2px 0 rgba(255,255,255,.35),
+    0 8px 0 #4F7A45,
+    0 14px 26px rgba(86,125,70,.4);
+}
+.pour-btn:active:not(:disabled) {
+  transform: translateY(3px) scale(.98);
+  box-shadow: inset 0 2px 0 rgba(255,255,255,.2), 0 2px 0 #4F7A45;
 }
 .pour-btn:disabled {
-  background: #f3d3e3;
-  box-shadow: 0 4px 0 #e0bdd1;
+  background: #D9E5D2;
+  color: #8FA086;
+  box-shadow: 0 4px 0 #C3D2BB;
   cursor: default;
 }
 
-.hint { font-size: 12px; color: #b88aa8; }
+.hint { font-size: 12px; color: var(--text-soft); }
 
 .result {
   font-size: 1rem;
-  font-weight: 700;
+  font-weight: 800;
   min-height: 22px;
-  color: #d6588f;
+  color: var(--matcha-dark);
 }
+.result.win {
+  font-size: 1.45rem;
+  color: #4C7A3D;
+  animation: pop-in .4s ease-out;
+}
+.result.lose { color: #C15F86; }
 
 /* ── Attempt history ── */
 .attempts {
@@ -213,19 +355,86 @@ h1 {
   padding: 3px 12px;
   border-radius: 999px;
 }
-.attempt.win  { background: #d6f5e3; color: #2d9e6f; }
-.attempt.lose { background: #ffe1ea; color: #e2548f; }
+.attempt.win  { background: #DCEFD4; color: #4C7A3D; }
+.attempt.lose { background: #FBE3EC; color: #C15F86; }
 
 /* ── Restart button ── */
 .restart-btn {
-  background: transparent;
-  border: 2px solid #ffd3ea;
+  background: linear-gradient(180deg, #FCE6F0, #F8D2E4);
+  border: none;
   border-radius: 999px;
-  padding: 6px 20px;
+  padding: 10px 26px;
   font-family: inherit;
   font-size: 13px;
-  font-weight: 700;
-  color: #b88aa8;
+  font-weight: 800;
+  color: #B5577E;
   cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 3px 0 #ECB9D2;
+  transition: transform .1s ease, box-shadow .1s ease;
 }
-.restart-btn:hover { border-color: #ff8fc4; color: #d6588f; }
+.restart-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.6), 0 5px 0 #ECB9D2;
+}
+.restart-btn:active {
+  transform: translateY(2px) scale(.97);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4), 0 1px 0 #ECB9D2;
+}
+
+/* ── Win celebration confetti (spawned by game.js) ── */
+.confetti {
+  position: absolute;
+  left: 50%; top: 45%;
+  font-size: 1rem;
+  pointer-events: none;
+  z-index: 8;
+  animation: confetti-fly .9s ease-out forwards;
+}
+
+/* ── Animations ── */
+@keyframes idle-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-4px); }
+}
+@keyframes liquid-wobble {
+  0%, 100% { transform: scaleX(1); }
+  50%      { transform: scaleX(1.02); }
+}
+@keyframes ripple {
+  0%, 100% { transform: translateY(0) scaleX(1); }
+  50%      { transform: translateY(-1.5px) scaleX(1.03); }
+}
+@keyframes steam-rise {
+  0%   { transform: translateY(0) scaleX(1); opacity: 0; }
+  20%  { opacity: .6; }
+  50%  { transform: translateY(-14px) translateX(3px) scaleX(1.4); opacity: .4; }
+  100% { transform: translateY(-28px) translateX(-3px) scaleX(1.8); opacity: 0; }
+}
+@keyframes blush-pulse {
+  0%, 92%, 100% { transform: scale(1); opacity: .75; }
+  96%           { transform: scale(1.18); opacity: .95; }
+}
+@keyframes pop-in {
+  0%   { transform: scale(.6); opacity: 0; }
+  60%  { transform: scale(1.15); }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes shimmer-text {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 300% 50%; }
+}
+@keyframes zone-glow {
+  0%, 100% { filter: drop-shadow(0 0 1px rgba(230,197,127,.3)); }
+  50%      { filter: drop-shadow(0 0 4px rgba(230,197,127,.7)); }
+}
+@keyframes confetti-fly {
+  0%   { transform: translate(0, 0) scale(1);   opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(.4); opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

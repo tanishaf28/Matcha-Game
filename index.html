@@ -6,7 +6,7 @@
   <title>Fill the Matcha Cup 🍵</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-  <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
@@ -14,11 +14,15 @@
   <div class="card">
 
     <!-- Title + target label -->
-    <h1> Fill the Matcha Cup 🍵</h1>
+    <h1>Fill the Matcha Cup 🍵</h1>
     <p class="target-label" id="target-label">Fill to ...%</p>
 
     <!-- The cup -->
-    <div class="cup-wrap">
+    <div class="cup-wrap" id="cup-wrap">
+
+      <!-- Rising steam puffs -->
+      <div class="steam"><span></span><span></span><span></span></div>
+
       <div class="cup" id="cup">
 
         <!-- The rising liquid -->
@@ -35,6 +39,7 @@
             <div class="eye"></div>
             <div class="eye"></div>
           </div>
+          <div class="mouth"></div>
           <div class="blush-row">
             <div class="blush"></div>
             <div class="blush"></div>
@@ -44,6 +49,9 @@
         <!-- Cup rim (sits on top visually) -->
         <div class="cup-rim"></div>
       </div>
+
+      <!-- Mug handle -->
+      <div class="cup-handle"></div>
     </div>
 
     <!-- Stats row -->
@@ -54,17 +62,17 @@
       </div>
       <div class="stat">
         <span class="stat-label">Target</span>
-        <span class="stat-val" id="tgt-pct">—</span>
+        <span class="stat-val" id="tgt-pct">-</span>
       </div>
       <div class="stat">
         <span class="stat-label">Best</span>
-        <span class="stat-val" id="best-pct">—</span>
+        <span class="stat-val" id="best-pct">-</span>
       </div>
     </div>
 
     <!-- The pour button -->
     <button class="pour-btn" id="pour-btn">Hold to pour 🍵</button>
-    <p class="hint">Release to stop</p>
+    <p class="hint">Let go when it feels right 🍃</p>
 
     <!-- Result message -->
     <p class="result" id="result"></p>
@@ -73,7 +81,7 @@
     <div class="attempts" id="attempts"></div>
 
     <!-- New round button -->
-    <button class="restart-btn" id="restart-btn">↻ New round</button>
+    <button class="restart-btn" id="restart-btn">Pour again 🍵</button>
 
   </div>
 

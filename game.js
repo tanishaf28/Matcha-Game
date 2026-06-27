@@ -1,6 +1,8 @@
 // ── Step 1: Grab all the elements we need ──────────────────
 // document.getElementById() finds an element by its id=""
 
+const cupWrapEl = document.getElementById('cup-wrap');
+const cupEl     = document.getElementById('cup');
 const liquid    = document.getElementById('liquid');
 const pourBtn   = document.getElementById('pour-btn');
 const curPctEl  = document.getElementById('cur-pct');
@@ -26,6 +28,13 @@ const TOLERANCE = 2;           // how many % away still counts as a win
 let bestScore = null;         // best distance from target ever
 let attempts  = [];            // list of recent attempt results
 
+// Both the liquid and the target line measure their % against this same
+// "inner" height (the cup minus the rim strip) — that's what keeps the
+// gold line and the liquid surface lined up at the same percentage.
+const CUP_H   = 170; // must match .cup-wrap height in CSS (px)
+const RIM_H   = 14;  // must match .cup-rim height in CSS (px)
+const INNER_H = CUP_H - RIM_H;
+
 // ── Step 3: Pick a random target % ──────────────────────────
 function pickTarget() {
   const choices = [30, 40, 45, 50, 55, 60, 65, 70, 75];
@@ -34,15 +43,13 @@ function pickTarget() {
 
 // ── Step 4: Draw the golden target line in the cup ─────────
 function drawTargetZone() {
-  const cupH  = 180;  // must match .cup-wrap height in CSS (px)
-  const rimH  = 14;   // must match .cup-rim height in CSS (px)
-  const inner = cupH - rimH;
-
   // Convert % to pixels from the bottom (thin band = the tolerance window)
-  const bottomPx = inner * ((target - TOLERANCE) / 100);
-  const topPx    = inner * ((target + TOLERANCE) / 100);
+  const bottomPx = INNER_H * ((target - TOLERANCE) / 100);
+  const topPx    = INNER_H * ((target + TOLERANCE) / 100);
 
-  targetZone.style.bottom = (rimH + bottomPx) + 'px';
+  // No extra rim offset here — the liquid's 0–100% already maps onto this
+  // same INNER_H range (see updateDisplay), so this lines up with it exactly.
+  targetZone.style.bottom = bottomPx + 'px';
   targetZone.style.height = (topPx - bottomPx) + 'px';
 }
 
@@ -55,13 +62,15 @@ function initRound() {
   gameOver = false;
   pourRate = 0.14 + Math.random() * 0.10; // small random speed
 
-  liquid.style.height   = '0%';
+  liquid.style.height   = '0px';
   curPctEl.textContent  = '0%';
   resultEl.textContent  = '';
+  resultEl.className    = 'result';
+  cupEl.classList.remove('pouring', 'in-zone');
   pourBtn.disabled      = false;
   pourBtn.textContent   = 'Hold to pour 🍵';
   tgtPctEl.textContent  = target + '%';
-  labelEl.textContent   = 'Fill to ' + target + '% ✨';
+  labelEl.textContent   = '🍵 Today\'s perfect pour: ' + target + '%';
 
   drawTargetZone();
 }
@@ -69,14 +78,19 @@ function initRound() {
 // ── Step 6: Update the cup display each tick ───────────────
 function updateDisplay() {
   const h = Math.min(level, 100); // cap at 100%
-  liquid.style.height    = h + '%';
+  liquid.style.height    = (INNER_H * h / 100) + 'px'; // same scale as the target line
   curPctEl.textContent   = Math.round(h) + '%';
+
+  // Glow gold while the pour is inside the winning window — live feedback!
+  const inZone = Math.abs(Math.round(h) - target) <= TOLERANCE;
+  cupEl.classList.toggle('in-zone', inZone);
 }
 
 // ── Step 7: Start pouring ──────────────────────────────────
 function startPour() {
   if (gameOver || pouring) return; // don't start twice
   pouring = true;
+  cupEl.classList.add('pouring'); // little wobble + ripple while filling
 
   // setInterval runs a function repeatedly on a timer
   // here: every 30 milliseconds, bump the level up
@@ -95,6 +109,7 @@ function startPour() {
 function stopPour() {
   if (!pouring) return;
   pouring = false;
+  cupEl.classList.remove('pouring', 'in-zone');
   clearInterval(interval);  // stop the timer!
   updateDisplay();
   if (!gameOver) endRound();
@@ -120,7 +135,7 @@ restartBtn.addEventListener('click', initRound);
 function endRound() {
   gameOver = true;
   pourBtn.disabled    = true;
-  pourBtn.textContent = 'Done! ✅';
+  pourBtn.textContent = 'Poured! 🍵';
 
   const rounded = Math.round(level);
 
@@ -131,19 +146,18 @@ function endRound() {
   const win = distance <= TOLERANCE;
 
   // ── Show feedback message ──
+  resultEl.className = 'result ' + (win ? 'win' : 'lose'); // styling via CSS classes
   if (win) {
-    resultEl.textContent = '🍵 Perfect pour!';
-    resultEl.style.color = '#2d7a2d';
+    resultEl.textContent = 'Yay! Perfect pour! 🌸✨';
+    spawnConfetti();
   } else if (rounded < target) {
     resultEl.textContent = distance <= 5
       ? 'So close just a tiny drop more! 😅'
       : 'Too little! Hold a bit longer. 💧';
-    resultEl.style.color = '#c0392b';
   } else {
     resultEl.textContent = distance <= 5
       ? 'Almost! Release a tiny bit sooner! ⏱️'
       : 'Too much! Release earlier next time. 😱';
-    resultEl.style.color = '#c0392b';
   }
 
   // ── Update best score ──
@@ -157,6 +171,26 @@ function endRound() {
   attempts.unshift({ pct: rounded, win }); // add to front
   if (attempts.length > 5) attempts.pop(); // keep only last 5
   renderAttempts();
+}
+
+// ── Little celebration burst for a winning pour ────────────
+function spawnConfetti() {
+  const bits = ['🌸', '✨', '🍃', '🍡'];
+
+  for (let i = 0; i < 10; i++) {
+    const bit = document.createElement('span');
+    bit.className   = 'confetti';
+    bit.textContent = bits[Math.floor(Math.random() * bits.length)];
+
+    // Send each piece flying off in a random direction
+    const angle = Math.random() * Math.PI * 2;
+    const dist  = 50 + Math.random() * 50;
+    bit.style.setProperty('--tx', Math.cos(angle) * dist + 'px');
+    bit.style.setProperty('--ty', Math.sin(angle) * dist + 'px');
+
+    cupWrapEl.appendChild(bit);
+    setTimeout(() => bit.remove(), 900); // clean up after the animation ends
+  }
 }
 
 // ── Render the colored attempt pills ───────────────────────

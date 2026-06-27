@@ -14,11 +14,11 @@ html{scroll-behavior:smooth}
 
 /* ── TOKENS ── */
 :root{
-  --g0:#f2faf2;--g1:#d6edd6;--g2:#aad5aa;--g3:#6db86d;--g4:#4a9c4a;--g5:#2d7a2d;--g6:#1a521a;
-  --cream:#fdf9f2;--parch:#f5ede0;--ink:#1c2b1c;--ink2:#3a4f3a;--muted:#6e8a6e;
-  --gold:#e9a825;--goldp:#fef8e7;--pink:#f9c0cb;--pinkp:#fff4f6;
-  --border:#cce5cc;--radius:14px;--radiuslg:22px;--radiuspill:999px;
-  --shadow:0 4px 24px rgba(74,156,74,.10);
+  --g0:#eef4e8;--g1:#dcefd4;--g2:#afd79d;--g3:#8fc183;--g4:#6fa563;--g5:#4c7a3d;--g6:#3f5e36;
+  --cream:#fbf3e7;--parch:#f3e8d6;--ink:#4a3f30;--ink2:#6b5a45;--muted:#8c7f68;
+  --gold:#c99a3e;--goldp:#f7e9c9;--pink:#e8a9c4;--pinkp:#fce6f0;
+  --border:#f1e8d8;--radius:14px;--radiuslg:22px;--radiuspill:999px;
+  --shadow:0 4px 24px rgba(140,120,80,.10);
   --codbg:#16201a;--codtx:#b8deb8;
 }
 
@@ -41,13 +41,11 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);li
 
 /* ── HERO ── */
 .hero{
-  background:linear-gradient(145deg,#e6f5e6 0%,var(--parch) 55%,#fff4f6 100%);
+  background:linear-gradient(145deg,var(--cream) 0%,var(--parch) 55%,#fbeae2 100%);
   padding:3.5rem 2rem 3rem;text-align:center;
   border-bottom:1.5px solid var(--border);
   position:relative;overflow:hidden;
 }
-.floaties{position:absolute;inset:0;pointer-events:none;overflow:hidden}
-.fl{position:absolute;font-size:1.3rem;opacity:.18;animation:fl 9s ease-in-out infinite}
 @keyframes fl{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-14px) rotate(15deg)}}
 .hero-eyebrow{
   display:inline-flex;align-items:center;gap:7px;
@@ -81,23 +79,30 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);li
   display:flex;flex-direction:column;align-items:center;gap:1rem;
 }
 .dc-title{font-size:.95rem;font-weight:900;color:var(--ink)}
-.dc-badge{font-size:11px;font-weight:800;background:var(--g1);color:var(--g5);border-radius:var(--radiuspill);padding:3px 12px}
+.dc-badge{font-size:11px;font-weight:800;background:var(--goldp);color:#8a6a2a;border-radius:var(--radiuspill);padding:3px 12px}
 
 /* cup in demo */
 .cup-wrap{position:relative;width:110px;height:150px}
 .cup-svg-wrap{width:110px;height:150px;position:relative}
 .cup-inner-liquid{
-  position:absolute;bottom:14px;left:12px;right:12px;
-  height:0%;background:linear-gradient(180deg,#8acf6e 0%,#4a9c4a 100%);
+  position:absolute;bottom:14px;left:12px;right:12px;z-index:1;
+  height:0px;background:linear-gradient(180deg,#8fc183 0%,#7aa874 100%);
   border-radius:0 0 18px 18px;transition:height .04s linear;overflow:hidden;
 }
-.liquid-shimmer{position:absolute;top:0;left:0;width:100%;height:6px;background:rgba(200,255,200,.5);border-radius:3px 3px 0 0}
+.liquid-shimmer{position:absolute;top:0;left:0;width:100%;height:6px;background:rgba(220,235,200,.55);border-radius:3px 3px 0 0}
+/* A single dashed line through the center of the band, not two separate
+   borders : two borders on a thin band never quite read as "the same line" */
 .target-band{
   position:absolute;left:12px;right:12px;
-  background:rgba(233,168,37,.18);
-  border-top:2px dashed var(--gold);border-bottom:2px dashed var(--gold);
+  background:rgba(201,154,62,.16);
   pointer-events:none;z-index:3;
 }
+.target-band::before{
+  content:'';position:absolute;left:0;top:50%;width:100%;
+  border-top:2px dashed var(--gold);transform:translateY(-1px);
+}
+/* Glows gold the moment the pour enters the winning window */
+.cup-wrap.in-zone{box-shadow:0 0 0 4px rgba(230,197,127,.5),0 0 18px rgba(230,197,127,.55);border-radius:18px;transition:box-shadow .15s ease}
 
 .dc-stats{display:flex;gap:9px}
 .dc-stat{background:var(--g0);border-radius:10px;padding:6px 13px;text-align:center;min-width:66px}
@@ -119,7 +124,7 @@ body{font-family:'Nunito',sans-serif;background:var(--cream);color:var(--ink);li
 .dc-attempts{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;min-height:24px}
 .ap{font-size:11px;font-weight:800;padding:3px 10px;border-radius:var(--radiuspill)}
 .ap.win{background:var(--g1);color:var(--g5)}
-.ap.lose{background:#fde8e8;color:#c0392b}
+.ap.lose{background:#fbe3ec;color:#c15f86}
 .dc-new{
   font-size:12px;font-weight:700;color:var(--muted);
   background:transparent;border:1.5px solid var(--border);
@@ -310,16 +315,6 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
 
 <!-- HERO -->
 <header class="hero">
-  <div class="floaties" aria-hidden="true">
-    <span class="fl" style="top:10%;left:4%;animation-delay:0s">🍃</span>
-    <span class="fl" style="top:18%;left:90%;animation-delay:1.3s">🌿</span>
-    <span class="fl" style="top:70%;left:2%;animation-delay:2.1s">🍃</span>
-    <span class="fl" style="top:72%;left:91%;animation-delay:.7s">🌿</span>
-    <span class="fl" style="top:42%;left:95%;animation-delay:1.9s;font-size:1rem">✨</span>
-    <span class="fl" style="top:85%;left:48%;animation-delay:3.2s;font-size:.9rem">✨</span>
-    <span class="fl" style="top:5%;left:55%;animation-delay:2.8s;font-size:.85rem">💚</span>
-  </div>
-
   <div class="hero-eyebrow">🎮 Mini Game · HTML · CSS · JavaScript</div>
   <h1>Build a <em>"Fill the Matcha Cup"</em><br/>Game from Scratch</h1>
   <p class="hero-sub">
@@ -328,7 +323,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   <div class="hero-meta">
     <span>🕐 ~45 minutes</span>
     <span>🌱 Beginner friendly</span>
-    <span>📁 3 files only</span>
+    <span>📁 4 files only</span>
     <span>🏆 Fully playable</span>
   </div>
 
@@ -340,33 +335,32 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
           <rect x="10" y="16" width="100" height="130" rx="18" ry="22"/>
         </clipPath>
       </defs>
-      <!-- glass body -->
-      <rect x="10" y="16" width="100" height="130" rx="18" ry="22" fill="#f0f7ee" stroke="#a8d0a8" stroke-width="3"/>
+      <!-- ceramic body, bold sticker-style outline -->
+      <rect x="10" y="16" width="100" height="130" rx="18" ry="22" fill="#fff3dc" stroke="#8a6e4c" stroke-width="4"/>
       <!-- liquid fill (animated) -->
       <g clip-path="url(#cup-clip)">
-        <rect id="hliq" x="10" y="95" width="100" height="51" fill="#5faa5f"/>
+        <rect id="hliq" x="10" y="95" width="100" height="51" fill="#7aa874"/>
         <!-- wave on surface -->
-        <ellipse id="hwave" cx="60" cy="95" rx="52" ry="5" fill="#8acf6e"/>
+        <ellipse id="hwave" cx="60" cy="95" rx="52" ry="5" fill="#8fc183"/>
       </g>
-      <!-- target zone lines -->
-      <line x1="10" y1="79" x2="110" y2="79" stroke="#e9a825" stroke-width="1.5" stroke-dasharray="5,4" opacity=".7"/>
-      <line x1="10" y1="95" x2="110" y2="95" stroke="#e9a825" stroke-width="1.5" stroke-dasharray="5,4" opacity=".7"/>
+      <!-- target line -->
+      <line x1="10" y1="87" x2="110" y2="87" stroke="#c99a3e" stroke-width="1.5" stroke-dasharray="5,4" opacity=".8"/>
       <!-- golden zone fill -->
-      <rect x="10" y="79" width="100" height="16" fill="rgba(233,168,37,.14)" clip-path="url(#cup-clip)"/>
+      <rect x="10" y="79" width="100" height="16" fill="rgba(201,154,62,.16)" clip-path="url(#cup-clip)"/>
       <!-- rim -->
-      <rect x="10" y="16" width="100" height="16" rx="18" fill="#e8f5e8" stroke="#a8d0a8" stroke-width="2"/>
+      <rect x="10" y="16" width="100" height="16" rx="18" fill="#f2ebda" stroke="#8a6e4c" stroke-width="3"/>
       <!-- kawaii face -->
       <!-- eyes -->
-      <circle cx="44" cy="125" r="5" fill="#2d4a2d"/>
-      <circle cx="76" cy="125" r="5" fill="#2d4a2d"/>
+      <circle cx="44" cy="125" r="5" fill="#4a3f30"/>
+      <circle cx="76" cy="125" r="5" fill="#4a3f30"/>
       <!-- eye shine -->
       <circle cx="46" cy="123" r="1.5" fill="#fff"/>
       <circle cx="78" cy="123" r="1.5" fill="#fff"/>
       <!-- smile -->
-      <path d="M 48 133 Q 60 142 72 133" stroke="#2d4a2d" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+      <path d="M 48 133 Q 60 142 72 133" stroke="#4a3f30" stroke-width="2.5" fill="none" stroke-linecap="round"/>
       <!-- blushes -->
-      <ellipse cx="36" cy="131" rx="7" ry="4" fill="#f9c0cb" opacity=".6"/>
-      <ellipse cx="84" cy="131" rx="7" ry="4" fill="#f9c0cb" opacity=".6"/>
+      <ellipse cx="36" cy="131" rx="7" ry="4" fill="#e8a9c4" opacity=".7"/>
+      <ellipse cx="84" cy="131" rx="7" ry="4" fill="#e8a9c4" opacity=".7"/>
     </svg>
     <p>Your finished game will look something like this!</p>
   </div>
@@ -377,37 +371,38 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   <div class="demo-strip-inner">
     <div class="demo-copy">
       <h2>Try it first! 🍵</h2>
-      <p>Before we build, have a play. <strong>Hold the button</strong> to pour matcha and <strong>release</strong> when you hit the golden dashed zone. Every round has a different target see how precise you are!</p>
+      <p>Before we build, have a play. <strong>Hold the button</strong> to pour matcha and <strong>release</strong> when you hit the golden dashed line : the cup glows gold when you're in the window. Every round has a different target, see how precise you are!</p>
       <br/>
       <p style="font-size:13px;color:var(--muted)">We'll build this together step by step. ↓</p>
     </div>
     <div class="demo-card">
       <div id="dc-mascot" style="font-size:2rem;animation:fl 2s ease-in-out infinite">🍵</div>
       <div class="dc-title">Fill the Matcha Cup</div>
-      <div class="dc-badge" id="dc-badge">Fill to 45% – 50%</div>
+      <div class="dc-badge" id="dc-badge">🍵 Today's perfect pour: 50%</div>
 
-      <div class="cup-wrap">
-        <!-- kawaii SVG cup for demo -->
-        <svg width="110" height="150" viewBox="0 0 110 150" style="position:absolute;top:0;left:0;z-index:1;pointer-events:none" aria-hidden="true">
+      <div class="cup-wrap" id="dc-wrap">
+        <!-- kawaii SVG cup outline for demo : sits BEHIND the liquid so the
+             cream fill only shows where the liquid hasn't risen to yet -->
+        <svg width="110" height="150" viewBox="0 0 110 150" style="position:absolute;top:0;left:0;z-index:0;pointer-events:none" aria-hidden="true">
           <defs><clipPath id="dc-clip"><rect x="8" y="12" width="94" height="124" rx="16" ry="20"/></clipPath></defs>
-          <rect x="8" y="12" width="94" height="124" rx="16" ry="20" fill="#f0f7ee" stroke="#a8d0a8" stroke-width="2.5"/>
-          <rect x="8" y="12" width="94" height="14" rx="16" fill="#e8f5e8" stroke="#a8d0a8" stroke-width="2" style="z-index:5"/>
+          <rect x="8" y="12" width="94" height="124" rx="16" ry="20" fill="#fff3dc" stroke="#8a6e4c" stroke-width="3.5"/>
         </svg>
         <!-- liquid layer (behind face, above cup bg) -->
         <div class="cup-inner-liquid" id="dc-liq">
           <div class="liquid-shimmer"></div>
         </div>
-        <!-- target band -->
+        <!-- target line -->
         <div class="target-band" id="dc-band" style="bottom:0;height:0"></div>
-        <!-- kawaii face SVG on top -->
+        <!-- rim + kawaii face SVG, on top of the liquid -->
         <svg width="110" height="150" viewBox="0 0 110 150" style="position:absolute;top:0;left:0;z-index:4;pointer-events:none" aria-hidden="true">
-          <circle cx="38" cy="118" r="4.5" fill="#2d4a2d"/>
-          <circle cx="72" cy="118" r="4.5" fill="#2d4a2d"/>
+          <rect x="8" y="12" width="94" height="14" rx="16" fill="#f2ebda" stroke="#8a6e4c" stroke-width="2.5"/>
+          <circle cx="38" cy="118" r="4.5" fill="#4a3f30"/>
+          <circle cx="72" cy="118" r="4.5" fill="#4a3f30"/>
           <circle cx="39.5" cy="116.5" r="1.3" fill="#fff"/>
           <circle cx="73.5" cy="116.5" r="1.3" fill="#fff"/>
-          <path id="dc-smile" d="M 42 125 Q 55 133 68 125" stroke="#2d4a2d" stroke-width="2.2" fill="none" stroke-linecap="round"/>
-          <ellipse cx="29" cy="122" rx="6" ry="3.5" fill="#f9c0cb" opacity=".65"/>
-          <ellipse cx="81" cy="122" rx="6" ry="3.5" fill="#f9c0cb" opacity=".65"/>
+          <path id="dc-smile" d="M 42 125 Q 55 133 68 125" stroke="#4a3f30" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+          <ellipse cx="29" cy="122" rx="6" ry="3.5" fill="#e8a9c4" opacity=".7"/>
+          <ellipse cx="81" cy="122" rx="6" ry="3.5" fill="#e8a9c4" opacity=".7"/>
         </svg>
       </div>
 
@@ -420,7 +415,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
       <button class="pour-btn" id="dc-btn">Hold to pour 🍵</button>
       <div class="dc-result" id="dc-result"></div>
       <div class="dc-attempts" id="dc-attempts"></div>
-      <button class="dc-new" id="dc-restart">↻ New round</button>
+      <button class="dc-new" id="dc-restart">Pour again 🍵</button>
     </div>
   </div>
 </div>
@@ -469,7 +464,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
     <div class="step-grid">
       <div class="step-row">
         <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
-        <div class="step-content"><h4>📁 Set up files</h4><p>Three files: <code>index.html</code>, <code>style.css</code>, <code>game.js</code></p></div>
+        <div class="step-content"><h4>📁 Set up files</h4><p>Four files: <code>index.html</code>, <code>style.css</code>, <code>game.js</code>, <code>matcha-pattern.svg</code></p></div>
       </div>
       <div class="step-row">
         <div class="step-line"><div class="step-line-dot"></div><div class="step-line-bar"></div></div>
@@ -501,14 +496,15 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
     <div class="eyebrow"><span class="step-dot">1</span> Setup</div>
     <h2 class="sh">Set up your project</h2>
     <p class="body">
-      Create a new folder on your computer and name it <code>matcha-game</code>. Inside that folder, create these three files. You can use VS Code, Notepad, or any editor you like:
+      Create a new folder on your computer and name it <code>matcha-game</code>. Inside that folder, create these four files. You can use VS Code, Notepad, or any editor you like:
     </p>
 
     <div class="file-tree" role="img" aria-label="Project file structure">
       <span class="ft-dir">matcha-game/</span><br/>
-      &nbsp;&nbsp;├── <span class="ft-new">index.html</span> &nbsp;<span class="ft-cmt">← the page and structure</span><br/>
-      &nbsp;&nbsp;├── <span class="ft-new">style.css</span> &nbsp;&nbsp;<span class="ft-cmt">← all the visuals &amp; kawaii-ness</span><br/>
-      &nbsp;&nbsp;└── <span class="ft-new">game.js</span> &nbsp;&nbsp;&nbsp;<span class="ft-cmt">← the game logic</span>
+      &nbsp;&nbsp;├── <span class="ft-new">index.html</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-cmt">← the page and structure</span><br/>
+      &nbsp;&nbsp;├── <span class="ft-new">style.css</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-cmt">← all the visuals &amp; kawaii-ness</span><br/>
+      &nbsp;&nbsp;├── <span class="ft-new">game.js</span> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="ft-cmt">← the game logic</span><br/>
+      &nbsp;&nbsp;└── <span class="ft-new">matcha-pattern.svg</span> <span class="ft-cmt">← tiny tiled background</span>
     </div>
 
     <div class="callout tip">
@@ -547,6 +543,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   <span class="tg">&lt;meta</span> <span class="at">charset</span>=<span class="vl">"UTF-8"</span><span class="tg">/&gt;</span>
   <span class="tg">&lt;meta</span> <span class="at">name</span>=<span class="vl">"viewport"</span> <span class="at">content</span>=<span class="vl">"width=device-width, initial-scale=1"</span><span class="tg">/&gt;</span>
   <span class="tg">&lt;title&gt;</span>Fill the Matcha Cup 🍵<span class="tg">&lt;/title&gt;</span>
+  <span class="tg">&lt;link</span> <span class="at">href</span>=<span class="vl">"https://fonts.googleapis.com/css2?family=Mochiy+Pop+One&amp;family=Nunito:wght@600;700;800&amp;display=swap"</span> <span class="at">rel</span>=<span class="vl">"stylesheet"</span><span class="tg">/&gt;</span>
   <span class="tg">&lt;link</span> <span class="at">rel</span>=<span class="vl">"stylesheet"</span> <span class="at">href</span>=<span class="vl">"style.css"</span><span class="tg">/&gt;</span>
 <span class="tg">&lt;/head&gt;</span>
 <span class="tg">&lt;body&gt;</span>
@@ -558,7 +555,11 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
     <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"target-label"</span> <span class="at">id</span>=<span class="vl">"target-label"</span><span class="tg">&gt;</span>Fill to ...%<span class="tg">&lt;/p&gt;</span>
 
     <span class="cm">&lt;!-- The cup --&gt;</span>
-    <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-wrap"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-wrap"</span> <span class="at">id</span>=<span class="vl">"cup-wrap"</span><span class="tg">&gt;</span>
+
+      <span class="cm">&lt;!-- Rising steam puffs --&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"steam"</span><span class="tg">&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/div&gt;</span>
+
       <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup"</span> <span class="at">id</span>=<span class="vl">"cup"</span><span class="tg">&gt;</span>
 
         <span class="cm">&lt;!-- The rising liquid --&gt;</span>
@@ -575,6 +576,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
             <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"eye"</span><span class="tg">&gt;&lt;/div&gt;</span>
             <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"eye"</span><span class="tg">&gt;&lt;/div&gt;</span>
           <span class="tg">&lt;/div&gt;</span>
+          <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"mouth"</span><span class="tg">&gt;&lt;/div&gt;</span>
           <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"blush-row"</span><span class="tg">&gt;</span>
             <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"blush"</span><span class="tg">&gt;&lt;/div&gt;</span>
             <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"blush"</span><span class="tg">&gt;&lt;/div&gt;</span>
@@ -584,6 +586,9 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
         <span class="cm">&lt;!-- Cup rim (sits on top visually) --&gt;</span>
         <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-rim"</span><span class="tg">&gt;&lt;/div&gt;</span>
       <span class="tg">&lt;/div&gt;</span>
+
+      <span class="cm">&lt;!-- Mug handle --&gt;</span>
+      <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"cup-handle"</span><span class="tg">&gt;&lt;/div&gt;</span>
     <span class="tg">&lt;/div&gt;</span>
 
     <span class="cm">&lt;!-- Stats row --&gt;</span>
@@ -604,7 +609,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
 
     <span class="cm">&lt;!-- The pour button --&gt;</span>
     <span class="tg">&lt;button</span> <span class="at">class</span>=<span class="vl">"pour-btn"</span> <span class="at">id</span>=<span class="vl">"pour-btn"</span><span class="tg">&gt;</span>Hold to pour 🍵<span class="tg">&lt;/button&gt;</span>
-    <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"hint"</span><span class="tg">&gt;</span>Release to stop<span class="tg">&lt;/p&gt;</span>
+    <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"hint"</span><span class="tg">&gt;</span>Let go when it feels right 🍃<span class="tg">&lt;/p&gt;</span>
 
     <span class="cm">&lt;!-- Result message --&gt;</span>
     <span class="tg">&lt;p</span> <span class="at">class</span>=<span class="vl">"result"</span> <span class="at">id</span>=<span class="vl">"result"</span><span class="tg">&gt;&lt;/p&gt;</span>
@@ -613,13 +618,17 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
     <span class="tg">&lt;div</span> <span class="at">class</span>=<span class="vl">"attempts"</span> <span class="at">id</span>=<span class="vl">"attempts"</span><span class="tg">&gt;&lt;/div&gt;</span>
 
     <span class="cm">&lt;!-- New round button --&gt;</span>
-    <span class="tg">&lt;button</span> <span class="at">class</span>=<span class="vl">"restart-btn"</span> <span class="at">id</span>=<span class="vl">"restart-btn"</span><span class="tg">&gt;</span>↻ New round<span class="tg">&lt;/button&gt;</span>
+    <span class="tg">&lt;button</span> <span class="at">class</span>=<span class="vl">"restart-btn"</span> <span class="at">id</span>=<span class="vl">"restart-btn"</span><span class="tg">&gt;</span>Pour again 🍵<span class="tg">&lt;/button&gt;</span>
 
   <span class="tg">&lt;/div&gt;</span>
 
   <span class="tg">&lt;script</span> <span class="at">src</span>=<span class="vl">"game.js"</span><span class="tg">&gt;&lt;/script&gt;</span>
 <span class="tg">&lt;/body&gt;</span>
 <span class="tg">&lt;/html&gt;</span></pre>
+    </div>
+
+    <div class="exp">
+      <strong>Notice the handle and steam are outside <code>.cup</code>.</strong> The cup div has <code>overflow: hidden</code> so the rising liquid stays clipped inside it : but that means anything else inside <code>.cup</code> gets clipped too. The handle and steam need to be visible <em>outside</em> the cup's edges, so they live as siblings in <code>.cup-wrap</code> instead.
     </div>
 
     <div class="exp">
@@ -658,9 +667,23 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
       <pre><span class="cm">/* ── Reset ── */</span>
 <span class="sl">*</span> { <span class="pp">box-sizing</span>: border-box; <span class="pp">margin</span>: <span class="nm">0</span>; <span class="pp">padding</span>: <span class="nm">0</span>; }
 
+<span class="cm">/* ── Japanese-café palette ── */</span>
+<span class="sl">:root</span> {
+  <span class="pp">--cream</span>:       <span class="nm">#FBF3E7</span>;
+  <span class="pp">--card-bg</span>:     <span class="nm">#FFF9EF</span>;
+  <span class="pp">--cup-bg</span>:      <span class="nm">#FFF3DC</span>;
+  <span class="pp">--matcha</span>:      <span class="nm">#7AA874</span>;
+  <span class="pp">--matcha-dark</span>: <span class="nm">#567D46</span>;
+  <span class="pp">--cup-edge</span>:    <span class="nm">#8A6E4C</span>;
+  <span class="pp">--sakura-deep</span>: <span class="nm">#E8A9C4</span>;
+  <span class="pp">--gold</span>:        <span class="nm">#E6C57F</span>;
+  <span class="pp">--gold-deep</span>:   <span class="nm">#C99A3E</span>;
+  <span class="pp">--ink</span>:         <span class="nm">#4A3F30</span>;
+}
+
 <span class="sl">body</span> {
-  <span class="pp">font-family</span>: <span class="str">'Nunito'</span>, sans-serif; <span class="cm">/* swap for any Google Font you like! */</span>
-  <span class="pp">background</span>: <span class="nm">#f0f7f0</span>;
+  <span class="pp">font-family</span>: <span class="str">'Nunito'</span>, sans-serif;
+  <span class="pp">background</span>: <span class="nm">linear-gradient(160deg, var(--cream) 0%, #F3E8D6 45%, #FBEAE2 100%)</span>;
   <span class="pp">min-height</span>: <span class="nm">100vh</span>;
   <span class="pp">display</span>: flex;
   <span class="pp">justify-content</span>: center;
@@ -670,49 +693,62 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
 
 <span class="cm">/* ── Main game card ── */</span>
 <span class="sl">.card</span> {
-  <span class="pp">background</span>: <span class="nm">#fff</span>;
-  <span class="pp">border-radius</span>: <span class="nm">28px</span>;
-  <span class="pp">padding</span>: <span class="nm">2rem 2rem 2.5rem</span>;
+  <span class="pp">background</span>: <span class="nm">var(--card-bg)</span>;
+  <span class="pp">border</span>: <span class="nm">1px solid #F1E8D8</span>;
+  <span class="pp">border-radius</span>: <span class="nm">32px</span>;
+  <span class="pp">padding</span>: <span class="nm">2.2rem 2rem 2.6rem</span>;
   <span class="pp">width</span>: <span class="nm">100%</span>;
-  <span class="pp">max-width</span>: <span class="nm">360px</span>;
+  <span class="pp">max-width</span>: <span class="nm">420px</span>;
   <span class="pp">display</span>: flex;
   <span class="pp">flex-direction</span>: column;
   <span class="pp">align-items</span>: center;
   <span class="pp">gap</span>: <span class="nm">1rem</span>;
   <span class="pp">text-align</span>: center;
-  <span class="pp">box-shadow</span>: <span class="nm">0 8px 40px rgba(74,156,74,.12)</span>;
+  <span class="pp">box-shadow</span>: <span class="nm">0 10px 0 #F4EBDB, 0 18px 40px rgba(140,120,80,.18)</span>;
 }
 
 <span class="sl">h1</span> {
-  <span class="pp">font-size</span>: <span class="nm">1.5rem</span>;
-  <span class="pp">font-weight</span>: <span class="nm">900</span>;
-  <span class="pp">color</span>: <span class="nm">#1c2b1c</span>;
+  <span class="pp">font-family</span>: <span class="str">'Mochiy Pop One'</span>, cursive;
+  <span class="pp">font-size</span>: <span class="nm">1.6rem</span>;
+  <span class="pp">font-weight</span>: <span class="nm">400</span>;
+  <span class="pp">color</span>: <span class="nm">var(--ink)</span>;
 }
 
 <span class="sl">.target-label</span> {
   <span class="pp">font-size</span>: <span class="nm">13px</span>;
   <span class="pp">font-weight</span>: <span class="nm">800</span>;
-  <span class="pp">background</span>: <span class="nm">#d6edd6</span>;
-  <span class="pp">color</span>: <span class="nm">#2d7a2d</span>;
-  <span class="pp">padding</span>: <span class="nm">5px 16px</span>;
+  <span class="pp">background</span>: <span class="nm">#F7E9C9</span>;
+  <span class="pp">color</span>: <span class="nm">#8A6A2A</span>;
+  <span class="pp">padding</span>: <span class="nm">6px 18px</span>;
   <span class="pp">border-radius</span>: <span class="nm">999px</span>;
 }
 
 <span class="cm">/* ── Cup container ── */</span>
 <span class="sl">.cup-wrap</span> {
   <span class="pp">position</span>: relative;
-  <span class="pp">width</span>: <span class="nm">130px</span>;
-  <span class="pp">height</span>: <span class="nm">180px</span>;
-  <span class="pp">margin</span>: <span class="nm">0.5rem 0</span>;
+  <span class="pp">width</span>: <span class="nm">160px</span>;
+  <span class="pp">height</span>: <span class="nm">170px</span>;
+  <span class="pp">margin</span>: <span class="nm">0.75rem 0</span>;
 }
 
 <span class="sl">.cup</span> {
   <span class="pp">position</span>: absolute;
   <span class="pp">inset</span>: <span class="nm">0</span>;
-  <span class="pp">background</span>: <span class="nm">#f2f9f0</span>;
-  <span class="pp">border</span>: <span class="nm">3px solid #a8d0a8</span>;
-  <span class="pp">border-radius</span>: <span class="nm">10px 10px 32px 32px</span>; <span class="cm">/* flat top, round bottom */</span>
+  <span class="pp">background</span>: <span class="nm">var(--cup-bg)</span>;
+  <span class="pp">border</span>: <span class="nm">4px solid var(--cup-edge)</span>; <span class="cm">/* bold, sticker-style outline */</span>
+  <span class="pp">border-radius</span>: <span class="nm">28px 28px 48px 48px</span>; <span class="cm">/* a stout mug, not a tall jar */</span>
   <span class="pp">overflow</span>: hidden; <span class="cm">/* ← KEY: clips the liquid inside the cup */</span>
+}
+
+<span class="cm">/* Mug handle : sits outside .cup so it never gets clipped */</span>
+<span class="sl">.cup-handle</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">top</span>: <span class="nm">40%</span>; <span class="pp">right</span>: <span class="nm">-19px</span>;
+  <span class="pp">width</span>: <span class="nm">26px</span>; <span class="pp">height</span>: <span class="nm">48px</span>;
+  <span class="pp">border</span>: <span class="nm">5px solid var(--cup-edge)</span>;
+  <span class="pp">border-left</span>: none;
+  <span class="pp">border-radius</span>: <span class="nm">0 30px 30px 0</span>;
+  <span class="pp">background</span>: <span class="nm">var(--card-bg)</span>;
 }
 
 <span class="cm">/* ── Rising liquid ── */</span>
@@ -721,36 +757,43 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   <span class="pp">bottom</span>: <span class="nm">0</span>;        <span class="cm">/* starts at the bottom */</span>
   <span class="pp">left</span>: <span class="nm">0</span>;
   <span class="pp">width</span>: <span class="nm">100%</span>;
-  <span class="pp">height</span>: <span class="nm">0%</span>;       <span class="cm">/* JS will increase this while button is held */</span>
-  <span class="pp">background</span>: <span class="nm">#5faa5f</span>;
-  <span class="pp">border-radius</span>: <span class="nm">0 0 29px 29px</span>;
+  <span class="pp">height</span>: <span class="nm">0px</span>;       <span class="cm">/* JS will increase this while button is held */</span>
+  <span class="pp">background</span>: <span class="nm">linear-gradient(180deg, #8FC183, var(--matcha))</span>;
+  <span class="pp">border-radius</span>: <span class="nm">0 0 44px 44px</span>;
   <span class="pp">transition</span>: height <span class="nm">0.04s</span> linear;
 }
 
 <span class="sl">.liquid-surface</span> {
   <span class="pp">position</span>: absolute;
   <span class="pp">top</span>: <span class="nm">0</span>; <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">width</span>: <span class="nm">100%</span>; <span class="pp">height</span>: <span class="nm">7px</span>;
-  <span class="pp">background</span>: <span class="nm">rgba(160,230,160,.5)</span>;
+  <span class="pp">background</span>: <span class="nm">rgba(190,230,170,.5)</span>;
   <span class="pp">border-radius</span>: <span class="nm">4px 4px 0 0</span>;
 }
 
-<span class="cm">/* ── Golden target zone ── */</span>
+<span class="cm">/* ── Target line : a single dashed line through the center, not two
+   separate borders. Two borders on a thin band never quite read as
+   "the same line" once you tilt your head. ── */</span>
 <span class="sl">.target-zone</span> {
   <span class="pp">position</span>: absolute;
   <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">width</span>: <span class="nm">100%</span>;
-  <span class="pp">background</span>: <span class="nm">rgba(233,168,37,.18)</span>;
-  <span class="pp">border-top</span>: <span class="nm">2px dashed #e9a825</span>;
-  <span class="pp">border-bottom</span>: <span class="nm">2px dashed #e9a825</span>;
+  <span class="pp">background</span>: <span class="nm">rgba(230,197,127,.2)</span>;
   <span class="pp">pointer-events</span>: none;
   <span class="pp">z-index</span>: <span class="nm">2</span>;
+}
+<span class="sl">.target-zone::before</span> {
+  <span class="pp">content</span>: <span class="str">''</span>;
+  <span class="pp">position</span>: absolute;
+  <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">top</span>: <span class="nm">50%</span>; <span class="pp">width</span>: <span class="nm">100%</span>;
+  <span class="pp">border-top</span>: <span class="nm">2px dashed var(--gold-deep)</span>;
+  <span class="pp">transform</span>: translateY(-1px);
 }
 
 <span class="cm">/* ── Cup rim (top strip) ── */</span>
 <span class="sl">.cup-rim</span> {
   <span class="pp">position</span>: absolute;
   <span class="pp">top</span>: <span class="nm">0</span>; <span class="pp">left</span>: <span class="nm">0</span>; <span class="pp">width</span>: <span class="nm">100%</span>; <span class="pp">height</span>: <span class="nm">14px</span>;
-  <span class="pp">background</span>: <span class="nm">#e4f2e4</span>;
-  <span class="pp">border-bottom</span>: <span class="nm">2px solid #a8d0a8</span>;
+  <span class="pp">background</span>: <span class="nm">#F2EBDA</span>;
+  <span class="pp">border-bottom</span>: <span class="nm">2px solid var(--cup-edge)</span>;
   <span class="pp">z-index</span>: <span class="nm">4</span>; <span class="cm">/* sits above liquid */</span>
 }
 
@@ -766,38 +809,35 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   <span class="pp">align-items</span>: center;
   <span class="pp">gap</span>: <span class="nm">5px</span>;
 }
-<span class="sl">.eyes</span> {
-  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">14px</span>;
-}
+<span class="sl">.eyes</span> { <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">14px</span>; }
 <span class="sl">.eye</span> {
-  <span class="pp">width</span>: <span class="nm">8px</span>; <span class="pp">height</span>: <span class="nm">8px</span>;
-  <span class="pp">background</span>: <span class="nm">#2d4a2d</span>;
-  <span class="pp">border-radius</span>: <span class="nm">50%</span>;
-  <span class="pp">position</span>: relative;
-}
-<span class="cm">/* little shine on each eye */</span>
-<span class="sl">.eye::after</span> {
-  <span class="pp">content</span>: <span class="str">''</span>;
-  <span class="pp">position</span>: absolute;
-  <span class="pp">top</span>: <span class="nm">1px</span>; <span class="pp">right</span>: <span class="nm">1px</span>;
-  <span class="pp">width</span>: <span class="nm">3px</span>; <span class="pp">height</span>: <span class="nm">3px</span>;
-  <span class="pp">background</span>: <span class="nm">#fff</span>;
+  <span class="pp">width</span>: <span class="nm">9px</span>; <span class="pp">height</span>: <span class="nm">9px</span>;
+  <span class="pp">background</span>: <span class="nm">var(--ink)</span>;
   <span class="pp">border-radius</span>: <span class="nm">50%</span>;
 }
-<span class="sl">.blush-row</span> {
-  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">28px</span>;
-  <span class="pp">margin-top</span>: <span class="nm">3px</span>;
+<span class="sl">.mouth</span> {
+  <span class="pp">width</span>: <span class="nm">10px</span>; <span class="pp">height</span>: <span class="nm">5px</span>;
+  <span class="pp">border-bottom</span>: <span class="nm">2px solid var(--ink)</span>;
+  <span class="pp">border-radius</span>: <span class="nm">0 0 10px 10px</span>;
 }
+<span class="sl">.blush-row</span> { <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">28px</span>; <span class="pp">margin-top</span>: <span class="nm">3px</span>; }
 <span class="sl">.blush</span> {
   <span class="pp">width</span>: <span class="nm">14px</span>; <span class="pp">height</span>: <span class="nm">8px</span>;
-  <span class="pp">background</span>: <span class="nm">#f9c0cb</span>;
+  <span class="pp">background</span>: <span class="nm">var(--sakura-deep)</span>;
   <span class="pp">border-radius</span>: <span class="nm">50%</span>;
-  <span class="pp">opacity</span>: <span class="nm">.7</span>;
+  <span class="pp">opacity</span>: <span class="nm">.75</span>;
 }</pre>
     </div>
 
     <div class="exp">
-      <strong>How does the cup trick work?</strong> The <code>.cup</code> div has <code>overflow: hidden</code>. The <code>.liquid</code> div lives inside it and its height starts at 0%. When JavaScript increases that height (say, to 60%), the liquid fills from the bottom up but anything above the cup's edges gets clipped. Simple but super effective!
+      <strong>How does the cup trick work?</strong> The <code>.cup</code> div has <code>overflow: hidden</code>. The <code>.liquid</code> div lives inside it and its height starts at <code>0</code>. When JavaScript increases that height, the liquid fills from the bottom up : but anything above the cup's edges gets clipped. Simple but super effective!
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">🌿</span>
+      <div class="callout-body">
+        <strong>Why a bold 4px outline instead of a thin pale border?</strong> A thin, low-contrast border reads as a generic web-template shape. A thicker, slightly darker "sticker" outline is what makes a hand-drawn kawaii illustration feel intentional instead of default.
+      </div>
     </div>
 
     <p class="body">Now add the stats, button, and utility styles:</p>
@@ -808,64 +848,69 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
         <button class="c-copy" onclick="copyMe(this)">Copy</button>
       </div>
       <pre><span class="cm">/* ── Stats row ── */</span>
-<span class="sl">.stats</span> {
-  <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">10px</span>;
-}
+<span class="sl">.stats</span> { <span class="pp">display</span>: flex; <span class="pp">gap</span>: <span class="nm">10px</span>; }
 <span class="sl">.stat</span> {
-  <span class="pp">background</span>: <span class="nm">#f2faf2</span>;
-  <span class="pp">border-radius</span>: <span class="nm">12px</span>;
-  <span class="pp">padding</span>: <span class="nm">7px 15px</span>;
+  <span class="pp">background</span>: <span class="nm">#EEF4E8</span>;
+  <span class="pp">border-radius</span>: <span class="nm">14px</span>;
+  <span class="pp">padding</span>: <span class="nm">8px 16px</span>;
   <span class="pp">text-align</span>: center;
 }
 <span class="sl">.stat-label</span> {
   <span class="pp">display</span>: block;
   <span class="pp">font-size</span>: <span class="nm">10px</span>;
-  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">font-weight</span>: <span class="nm">700</span>;
   <span class="pp">text-transform</span>: uppercase;
   <span class="pp">letter-spacing</span>: <span class="nm">.05em</span>;
-  <span class="pp">color</span>: <span class="nm">#6e8a6e</span>;
+  <span class="pp">color</span>: <span class="nm">#8B9C7E</span>;
 }
 <span class="sl">.stat-val</span> {
   <span class="pp">font-size</span>: <span class="nm">1.2rem</span>;
-  <span class="pp">font-weight</span>: <span class="nm">900</span>;
-  <span class="pp">color</span>: <span class="nm">#4a9c4a</span>;
+  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">color</span>: <span class="nm">var(--matcha-dark)</span>;
 }
 
-<span class="cm">/* ── Pour button ── */</span>
+<span class="cm">/* ── Pour button (fluffy: inset highlight + hover lift) ── */</span>
 <span class="sl">.pour-btn</span> {
-  <span class="pp">width</span>: <span class="nm">210px</span>;
-  <span class="pp">padding</span>: <span class="nm">14px</span>;
-  <span class="pp">background</span>: <span class="nm">#4a9c4a</span>;
-  <span class="pp">color</span>: <span class="nm">#fff</span>;
+  <span class="pp">width</span>: <span class="nm">230px</span>;
+  <span class="pp">padding</span>: <span class="nm">16px</span>;
+  <span class="pp">background</span>: <span class="nm">linear-gradient(180deg, #8FC183, #6FA563)</span>;
+  <span class="pp">color</span>: <span class="nm">#FFFDF8</span>;
   <span class="pp">border</span>: none;
   <span class="pp">border-radius</span>: <span class="nm">999px</span>;
   <span class="pp">font-family</span>: inherit;
-  <span class="pp">font-size</span>: <span class="nm">1rem</span>;
+  <span class="pp">font-size</span>: <span class="nm">1.05rem</span>;
   <span class="pp">font-weight</span>: <span class="nm">800</span>;
   <span class="pp">cursor</span>: pointer;
   <span class="pp">user-select</span>: none;
   <span class="pp">touch-action</span>: none; <span class="cm">/* stops scroll on mobile */</span>
-  <span class="pp">box-shadow</span>: <span class="nm">0 4px 0 #2d7a2d</span>;
-  <span class="pp">transition</span>: transform <span class="nm">.08s</span>, box-shadow <span class="nm">.08s</span>;
+  <span class="pp">box-shadow</span>:
+    <span class="nm">inset 0 2px 0 rgba(255,255,255,.35)</span>,
+    <span class="nm">0 6px 0 #4F7A45</span>,
+    <span class="nm">0 10px 22px rgba(86,125,70,.35)</span>;
+  <span class="pp">transition</span>: transform <span class="nm">.12s</span> ease, box-shadow <span class="nm">.12s</span> ease;
 }
-<span class="sl">.pour-btn:active</span> {
-  <span class="pp">transform</span>: translateY(<span class="nm">3px</span>);
-  <span class="pp">box-shadow</span>: <span class="nm">0 1px 0 #2d7a2d</span>;
-}
+<span class="sl">.pour-btn:hover:not(:disabled)</span> { <span class="pp">transform</span>: translateY(-2px); }
+<span class="sl">.pour-btn:active:not(:disabled)</span> { <span class="pp">transform</span>: translateY(3px) scale(.98); }
 <span class="sl">.pour-btn:disabled</span> {
-  <span class="pp">background</span>: <span class="nm">#b0ccb0</span>;
-  <span class="pp">box-shadow</span>: <span class="nm">0 4px 0 #8aaa8a</span>;
+  <span class="pp">background</span>: <span class="nm">#D9E5D2</span>;
+  <span class="pp">color</span>: <span class="nm">#8FA086</span>;
+  <span class="pp">box-shadow</span>: <span class="nm">0 4px 0 #C3D2BB</span>;
   <span class="pp">cursor</span>: default;
 }
 
-<span class="sl">.hint</span> { <span class="pp">font-size</span>: <span class="nm">12px</span>; <span class="pp">color</span>: <span class="nm">#6e8a6e</span>; }
+<span class="sl">.hint</span> { <span class="pp">font-size</span>: <span class="nm">12px</span>; <span class="pp">color</span>: <span class="nm">#8C7F68</span>; }
 
 <span class="sl">.result</span> {
   <span class="pp">font-size</span>: <span class="nm">1rem</span>;
   <span class="pp">font-weight</span>: <span class="nm">800</span>;
   <span class="pp">min-height</span>: <span class="nm">22px</span>;
-  <span class="pp">color</span>: <span class="nm">#4a9c4a</span>;
+  <span class="pp">color</span>: <span class="nm">var(--matcha-dark)</span>;
 }
+<span class="sl">.result.win</span> {
+  <span class="pp">font-size</span>: <span class="nm">1.45rem</span>; <span class="cm">/* the win message gets to be bigger and louder */</span>
+  <span class="pp">color</span>: <span class="nm">#4C7A3D</span>;
+}
+<span class="sl">.result.lose</span> { <span class="pp">color</span>: <span class="nm">#C15F86</span>; }
 
 <span class="cm">/* ── Attempt history ── */</span>
 <span class="sl">.attempts</span> {
@@ -873,38 +918,45 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   <span class="pp">justify-content</span>: center; <span class="pp">min-height</span>: <span class="nm">26px</span>;
 }
 <span class="sl">.attempt</span> {
-  <span class="pp">font-size</span>: <span class="nm">12px</span>; <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">font-size</span>: <span class="nm">12px</span>; <span class="pp">font-weight</span>: <span class="nm">700</span>;
   <span class="pp">padding</span>: <span class="nm">3px 12px</span>;
   <span class="pp">border-radius</span>: <span class="nm">999px</span>;
 }
-<span class="sl">.attempt.win</span>  { <span class="pp">background</span>: <span class="nm">#d6edd6</span>; <span class="pp">color</span>: <span class="nm">#2d7a2d</span>; }
-<span class="sl">.attempt.lose</span> { <span class="pp">background</span>: <span class="nm">#fde8e8</span>; <span class="pp">color</span>: <span class="nm">#c0392b</span>; }
+<span class="sl">.attempt.win</span>  { <span class="pp">background</span>: <span class="nm">#DCEFD4</span>; <span class="pp">color</span>: <span class="nm">#4C7A3D</span>; }
+<span class="sl">.attempt.lose</span> { <span class="pp">background</span>: <span class="nm">#FBE3EC</span>; <span class="pp">color</span>: <span class="nm">#C15F86</span>; }
 
 <span class="cm">/* ── Restart button ── */</span>
 <span class="sl">.restart-btn</span> {
-  <span class="pp">background</span>: transparent;
-  <span class="pp">border</span>: <span class="nm">2px solid #cce5cc</span>;
+  <span class="pp">background</span>: <span class="nm">linear-gradient(180deg, #FCE6F0, #F8D2E4)</span>;
+  <span class="pp">border</span>: none;
   <span class="pp">border-radius</span>: <span class="nm">999px</span>;
-  <span class="pp">padding</span>: <span class="nm">6px 20px</span>;
+  <span class="pp">padding</span>: <span class="nm">10px 26px</span>;
   <span class="pp">font-family</span>: inherit;
   <span class="pp">font-size</span>: <span class="nm">13px</span>;
-  <span class="pp">font-weight</span>: <span class="nm">700</span>;
-  <span class="pp">color</span>: <span class="nm">#6e8a6e</span>;
+  <span class="pp">font-weight</span>: <span class="nm">800</span>;
+  <span class="pp">color</span>: <span class="nm">#B5577E</span>;
   <span class="pp">cursor</span>: pointer;
 }
-<span class="sl">.restart-btn:hover</span> { <span class="pp">border-color</span>: <span class="nm">#4a9c4a</span>; <span class="pp">color</span>: <span class="nm">#4a9c4a</span>; }</pre>
+<span class="sl">.restart-btn:hover</span> { <span class="pp">transform</span>: translateY(-2px); }</pre>
+    </div>
+
+    <div class="callout note">
+      <span class="callout-icon">🌸</span>
+      <div class="callout-body">
+        <strong>Why is the win message its own CSS class instead of an inline style?</strong> Earlier drafts of this game set <code>resultEl.style.color</code> directly in JavaScript. Using <code>resultEl.className = 'result win'</code> instead means all the win-specific styling : color <em>and</em> font-size : lives in one place in the CSS, instead of being split between two files.
+      </div>
     </div>
 
     <div class="callout tip">
       <span class="callout-icon">💡</span>
       <div class="callout-body">
-        <strong>Want a Google Font?</strong> Add this inside your <code>&lt;head&gt;</code> before the CSS link: <code>&lt;link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&amp;display=swap" rel="stylesheet"&gt;</code>. Nunito gives a round, friendly look that's very matcha-coded.
+        <strong>Why two fonts?</strong> <code>Mochiy Pop One</code> (loaded back in Step 1) gives the title a chunky, hand-drawn-sticker feel : but it only ships one weight, so it's wrong for body text. <code>Nunito</code> handles everything else with its round, friendly letterforms. Pairing one "personality" display font with one neutral workhorse font is a reliable combo for kawaii-style UI.
       </div>
     </div>
 
     <div class="check">
       <span class="check-icon">🎨</span>
-      <div class="check-body">Checkpoint: refresh the browser. You should see a cute green card with a white cup, some stats, and a green button!<span>The cup will be empty for now we bring it to life in the next step.</span></div>
+      <div class="check-body">Checkpoint: refresh the browser. You should see a warm cream card with a ceramic-mug-shaped cup, some stats, and a green pill button!<span>The cup will be empty for now : we bring it to life in the next step.</span></div>
     </div>
   </section>
 
@@ -927,6 +979,8 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
       <pre><span class="cm">// ── Step 1: Grab all the elements we need ──────────────────</span>
 <span class="cm">// document.getElementById() finds an element by its id=""</span>
 
+<span class="kw">const</span> cupWrapEl = document.<span class="fn">getElementById</span>(<span class="str">'cup-wrap'</span>);
+<span class="kw">const</span> cupEl     = document.<span class="fn">getElementById</span>(<span class="str">'cup'</span>);
 <span class="kw">const</span> liquid    = document.<span class="fn">getElementById</span>(<span class="str">'liquid'</span>);
 <span class="kw">const</span> pourBtn   = document.<span class="fn">getElementById</span>(<span class="str">'pour-btn'</span>);
 <span class="kw">const</span> curPctEl  = document.<span class="fn">getElementById</span>(<span class="str">'cur-pct'</span>);
@@ -947,33 +1001,33 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
 <span class="kw">let</span> interval = <span class="kw">null</span>;  <span class="cm">// stores our setInterval so we can stop it</span>
 <span class="kw">let</span> pourRate  = <span class="nm">0.18</span>; <span class="cm">// how fast the liquid rises per tick</span>
 
-<span class="kw">let</span> targetLow, targetHigh;     <span class="cm">// the target range for this round</span>
-<span class="kw">let</span> bestScore = <span class="kw">null</span>;         <span class="cm">// best distance from target center ever</span>
-<span class="kw">let</span> attempts  = [];            <span class="cm">// list of recent attempt results</span>
+<span class="kw">let</span> target;                  <span class="cm">// the single target % for this round</span>
+<span class="kw">const</span> TOLERANCE = <span class="nm">2</span>;       <span class="cm">// how many % away still counts as a win</span>
+<span class="kw">let</span> bestScore = <span class="kw">null</span>;        <span class="cm">// best distance from target ever</span>
+<span class="kw">let</span> attempts  = [];           <span class="cm">// list of recent attempt results</span>
 
-<span class="cm">// ── Step 3: Pick a random target range ─────────────────────</span>
+<span class="cm">// Both the liquid and the target line measure their % against this same
+// "inner" height (the cup minus the rim strip) : that's what keeps the
+// gold line and the liquid surface lined up at the same percentage.</span>
+<span class="kw">const</span> CUP_H   = <span class="nm">170</span>; <span class="cm">// must match .cup-wrap height in CSS (px)</span>
+<span class="kw">const</span> RIM_H   = <span class="nm">14</span>;  <span class="cm">// must match .cup-rim height in CSS (px)</span>
+<span class="kw">const</span> INNER_H = CUP_H - RIM_H;
+
+<span class="cm">// ── Step 3: Pick a random target % ──────────────────────────</span>
 <span class="kw">function</span> <span class="fn">pickTarget</span>() {
-  <span class="cm">// Each entry is [low%, high%] : a 5% window</span>
-  <span class="kw">const</span> ranges = [
-    [<span class="nm">30</span>, <span class="nm">35</span>], [<span class="nm">40</span>, <span class="nm">45</span>], [<span class="nm">45</span>, <span class="nm">50</span>],
-    [<span class="nm">50</span>, <span class="nm">55</span>], [<span class="nm">60</span>, <span class="nm">65</span>], [<span class="nm">70</span>, <span class="nm">75</span>]
-  ];
-  <span class="kw">const</span> r = ranges[Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * ranges.length)];
-  targetLow  = r[<span class="nm">0</span>];
-  targetHigh = r[<span class="nm">1</span>];
+  <span class="kw">const</span> choices = [<span class="nm">30</span>, <span class="nm">40</span>, <span class="nm">45</span>, <span class="nm">50</span>, <span class="nm">55</span>, <span class="nm">60</span>, <span class="nm">65</span>, <span class="nm">70</span>, <span class="nm">75</span>];
+  target = choices[Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * choices.length)];
 }
 
-<span class="cm">// ── Step 4: Draw the golden zone band in the cup ───────────</span>
+<span class="cm">// ── Step 4: Draw the golden target line in the cup ─────────</span>
 <span class="kw">function</span> <span class="fn">drawTargetZone</span>() {
-  <span class="kw">const</span> cupH  = <span class="nm">180</span>;  <span class="cm">// must match .cup-wrap height in CSS (px)</span>
-  <span class="kw">const</span> rimH  = <span class="nm">14</span>;   <span class="cm">// must match .cup-rim height in CSS (px)</span>
-  <span class="kw">const</span> inner = cupH - rimH;
+  <span class="cm">// Convert % to pixels from the bottom (thin band = the tolerance window)</span>
+  <span class="kw">const</span> bottomPx = INNER_H * ((target - TOLERANCE) / <span class="nm">100</span>);
+  <span class="kw">const</span> topPx    = INNER_H * ((target + TOLERANCE) / <span class="nm">100</span>);
 
-  <span class="cm">// Convert % to pixels from the bottom</span>
-  <span class="kw">const</span> bottomPx = inner * (targetLow  / <span class="nm">100</span>);
-  <span class="kw">const</span> topPx    = inner * (targetHigh / <span class="nm">100</span>);
-
-  targetZone.style.bottom = (rimH + bottomPx) + <span class="str">'px'</span>;
+  <span class="cm">// No extra rim offset here : the liquid's 0–100% already maps onto this
+  // same INNER_H range (see updateDisplay), so this lines up with it exactly.</span>
+  targetZone.style.bottom = bottomPx + <span class="str">'px'</span>;
   targetZone.style.height = (topPx - bottomPx) + <span class="str">'px'</span>;
 }
 
@@ -986,13 +1040,15 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
   gameOver = <span class="kw">false</span>;
   pourRate = <span class="nm">0.14</span> + Math.<span class="fn">random</span>() * <span class="nm">0.10</span>; <span class="cm">// small random speed</span>
 
-  liquid.style.height   = <span class="str">'0%'</span>;
-  curPctEl.textContent  = <span class="str">'0%'</span>;
-  resultEl.textContent  = <span class="str">''</span>;
+  liquid.style.height  = <span class="str">'0px'</span>;
+  curPctEl.textContent = <span class="str">'0%'</span>;
+  resultEl.textContent = <span class="str">''</span>;
+  resultEl.className   = <span class="str">'result'</span>;
+  cupEl.classList.<span class="fn">remove</span>(<span class="str">'pouring'</span>, <span class="str">'in-zone'</span>);
   pourBtn.disabled      = <span class="kw">false</span>;
   pourBtn.textContent   = <span class="str">'Hold to pour 🍵'</span>;
-  tgtPctEl.textContent  = targetLow + <span class="str">'–'</span> + targetHigh + <span class="str">'%'</span>;
-  labelEl.textContent   = <span class="str">'Fill to '</span> + targetLow + <span class="str">'% – '</span> + targetHigh + <span class="str">'%'</span>;
+  tgtPctEl.textContent  = target + <span class="str">'%'</span>;
+  labelEl.textContent   = <span class="str">'🍵 Today\'s perfect pour: '</span> + target + <span class="str">'%'</span>;
 
   <span class="fn">drawTargetZone</span>();
 }
@@ -1000,14 +1056,19 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
 <span class="cm">// ── Step 6: Update the cup display each tick ───────────────</span>
 <span class="kw">function</span> <span class="fn">updateDisplay</span>() {
   <span class="kw">const</span> h = Math.<span class="fn">min</span>(level, <span class="nm">100</span>); <span class="cm">// cap at 100%</span>
-  liquid.style.height    = h + <span class="str">'%'</span>;
-  curPctEl.textContent   = Math.<span class="fn">round</span>(h) + <span class="str">'%'</span>;
+  liquid.style.height  = (INNER_H * h / <span class="nm">100</span>) + <span class="str">'px'</span>; <span class="cm">// same scale as the target line</span>
+  curPctEl.textContent = Math.<span class="fn">round</span>(h) + <span class="str">'%'</span>;
+
+  <span class="cm">// Glow gold while the pour is inside the winning window : live feedback!</span>
+  <span class="kw">const</span> inZone = Math.<span class="fn">abs</span>(Math.<span class="fn">round</span>(h) - target) <= TOLERANCE;
+  cupEl.classList.<span class="fn">toggle</span>(<span class="str">'in-zone'</span>, inZone);
 }
 
 <span class="cm">// ── Step 7: Start pouring ──────────────────────────────────</span>
 <span class="kw">function</span> <span class="fn">startPour</span>() {
   <span class="kw">if</span> (gameOver || pouring) <span class="kw">return</span>; <span class="cm">// don't start twice</span>
   pouring = <span class="kw">true</span>;
+  cupEl.classList.<span class="fn">add</span>(<span class="str">'pouring'</span>);
 
   <span class="cm">// setInterval runs a function repeatedly on a timer</span>
   <span class="cm">// here: every 30 milliseconds, bump the level up</span>
@@ -1026,6 +1087,7 @@ footer{text-align:center;padding:1.8rem;font-size:12.5px;color:var(--muted);bord
 <span class="kw">function</span> <span class="fn">stopPour</span>() {
   <span class="kw">if</span> (!pouring) <span class="kw">return</span>;
   pouring = <span class="kw">false</span>;
+  cupEl.classList.<span class="fn">remove</span>(<span class="str">'pouring'</span>, <span class="str">'in-zone'</span>);
   <span class="fn">clearInterval</span>(interval);  <span class="cm">// stop the timer!</span>
   <span class="fn">updateDisplay</span>();
   <span class="kw">if</span> (!gameOver) <span class="fn">endRound</span>();
@@ -1059,6 +1121,13 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
         <strong>The speed randomisation trick</strong> - <code>pourRate = 0.14 + Math.random() * 0.10</code>  means every round pours at a slightly different speed. Players can't just memorize a timing. It makes the game way more replayable for basically zero extra code.
       </div>
     </div>
+
+    <div class="callout note">
+      <span class="callout-icon">⚠️</span>
+      <div class="callout-body">
+        <strong>A bug worth knowing about.</strong> An earlier version of this game set the liquid's height as a <em>percentage</em> of the full cup (<code>liquid.style.height = h + '%'</code>), while the target line was positioned in pixels against the cup <em>minus the rim</em>. Those are two different scales, so the gold line and the actual liquid surface never quite lined up : off by exactly the rim's height. The fix: measure both against the same <code>INNER_H</code> constant, as shown above. Whenever two visuals are supposed to represent the same number, compute them from the same reference : not two that merely look similar.
+      </div>
+    </div>
   </section>
 
   <hr class="div"/>
@@ -1076,41 +1145,36 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
         <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>game.js Part 2: endRound &amp; history</div>
         <button class="c-copy" onclick="copyMe(this)">Copy</button>
       </div>
-      <pre><span class="cm">// ── endRound: called when the player releases the button ───</span>
-<span class="kw">function</span> <span class="fn">endRound</span>() {
+      <pre><span class="kw">function</span> <span class="fn">endRound</span>() {
   gameOver = <span class="kw">true</span>;
   pourBtn.disabled    = <span class="kw">true</span>;
-  pourBtn.textContent = <span class="str">'Done! ✅'</span>;
+  pourBtn.textContent = <span class="str">'Poured! 🍵'</span>;
 
   <span class="kw">const</span> rounded = Math.<span class="fn">round</span>(level);
 
-  <span class="cm">// Did they land inside the target range?</span>
-  <span class="kw">const</span> win = rounded >= targetLow && rounded <= targetHigh;
+  <span class="cm">// How far from the target? (used for win check + best score)</span>
+  <span class="kw">const</span> distance = Math.<span class="fn">abs</span>(rounded - target);
 
-  <span class="cm">// How far from the center of the zone? (used for best score)</span>
-  <span class="kw">const</span> center    = (targetLow + targetHigh) / <span class="nm">2</span>;
-  <span class="kw">const</span> distance  = Math.<span class="fn">abs</span>(rounded - center);
+  <span class="cm">// Did they land within the tolerance window of the target?</span>
+  <span class="kw">const</span> win = distance <= TOLERANCE;
 
   <span class="cm">// ── Show feedback message ──</span>
+  resultEl.className = <span class="str">'result '</span> + (win ? <span class="str">'win'</span> : <span class="str">'lose'</span>); <span class="cm">// styling via CSS classes</span>
   <span class="kw">if</span> (win) {
-    resultEl.textContent = <span class="str">'🍵 Perfect pour!'</span>;
-    resultEl.style.color = <span class="str">'#2d7a2d'</span>;
-  } <span class="kw">else if</span> (rounded < targetLow) {
-    <span class="kw">const</span> off = targetLow - rounded;
-    resultEl.textContent = off <= <span class="nm">5</span>
+    resultEl.textContent = <span class="str">'Yay! Perfect pour! 🌸✨'</span>;
+    <span class="fn">spawnConfetti</span>();
+  } <span class="kw">else if</span> (rounded < target) {
+    resultEl.textContent = distance <= <span class="nm">5</span>
       ? <span class="str">'So close just a tiny drop more! 😅'</span>
       : <span class="str">'Too little! Hold a bit longer. 💧'</span>;
-    resultEl.style.color = <span class="str">'#c0392b'</span>;
   } <span class="kw">else</span> {
-    <span class="kw">const</span> off = rounded - targetHigh;
-    resultEl.textContent = off <= <span class="nm">5</span>
+    resultEl.textContent = distance <= <span class="nm">5</span>
       ? <span class="str">'Almost! Release a tiny bit sooner! ⏱️'</span>
       : <span class="str">'Too much! Release earlier next time. 😱'</span>;
-    resultEl.style.color = <span class="str">'#c0392b'</span>;
   }
 
   <span class="cm">// ── Update best score ──</span>
-  <span class="cm">// We store the closest distance  smaller = better</span>
+  <span class="cm">// We store the closest distance : smaller = better</span>
   <span class="kw">if</span> (bestScore === <span class="kw">null</span> || distance < bestScore) {
     bestScore = distance;
     bestEl.textContent = rounded + <span class="str">'%'</span>;
@@ -1120,6 +1184,26 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
   attempts.<span class="fn">unshift</span>({ pct: rounded, win }); <span class="cm">// add to front</span>
   <span class="kw">if</span> (attempts.length > <span class="nm">5</span>) attempts.<span class="fn">pop</span>(); <span class="cm">// keep only last 5</span>
   <span class="fn">renderAttempts</span>();
+}
+
+<span class="cm">// ── Little celebration burst for a winning pour ────────────</span>
+<span class="kw">function</span> <span class="fn">spawnConfetti</span>() {
+  <span class="kw">const</span> bits = [<span class="str">'🌸'</span>, <span class="str">'✨'</span>, <span class="str">'🍃'</span>, <span class="str">'🍡'</span>];
+
+  <span class="kw">for</span> (<span class="kw">let</span> i = <span class="nm">0</span>; i < <span class="nm">10</span>; i++) {
+    <span class="kw">const</span> bit = document.<span class="fn">createElement</span>(<span class="str">'span'</span>);
+    bit.className   = <span class="str">'confetti'</span>;
+    bit.textContent = bits[Math.<span class="fn">floor</span>(Math.<span class="fn">random</span>() * bits.length)];
+
+    <span class="cm">// Send each piece flying off in a random direction</span>
+    <span class="kw">const</span> angle = Math.<span class="fn">random</span>() * Math.PI * <span class="nm">2</span>;
+    <span class="kw">const</span> dist  = <span class="nm">50</span> + Math.<span class="fn">random</span>() * <span class="nm">50</span>;
+    bit.style.<span class="fn">setProperty</span>(<span class="str">'--tx'</span>, Math.<span class="fn">cos</span>(angle) * dist + <span class="str">'px'</span>);
+    bit.style.<span class="fn">setProperty</span>(<span class="str">'--ty'</span>, Math.<span class="fn">sin</span>(angle) * dist + <span class="str">'px'</span>);
+
+    cupWrapEl.<span class="fn">appendChild</span>(bit);
+    <span class="fn">setTimeout</span>(() => bit.<span class="fn">remove</span>(), <span class="nm">900</span>); <span class="cm">// clean up after the animation ends</span>
+  }
 }
 
 <span class="cm">// ── Render the colored attempt pills ───────────────────────</span>
@@ -1139,12 +1223,39 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
     </div>
 
     <div class="exp">
-      <strong>Why "distance from center" for best score?</strong> Instead of storing the highest percentage, we store how close the player got to the <em>middle</em> of the target zone. A 47% pour when the target is 45–50% (center: 47.5, distance: 0.5) beats a lucky 50% (distance: 2.5). This rewards precision over luck. ✨
+      <strong>Why give live feedback (the gold glow) instead of waiting until release?</strong> A precision game feels much better when you find out you're "in the zone" <em>while</em> you're still pouring, not only after committing to releasing. Continuous feedback beats a single pass/fail check at the end : that's also why <code>spawnConfetti()</code> fires immediately on a win rather than waiting for any further input.
+    </div>
+
+    <p class="body">Add the matching CSS for the live glow and the confetti burst:</p>
+
+    <div class="cblock">
+      <div class="cblock-top">
+        <div class="c-fname"><div class="c-dots"><div class="c-dot"></div><div class="c-dot"></div><div class="c-dot"></div></div>style.css Part 3: glow &amp; confetti</div>
+        <button class="c-copy" onclick="copyMe(this)">Copy</button>
+      </div>
+      <pre><span class="cm">/* Glows gold the moment the pour enters the winning window */</span>
+<span class="sl">.cup.in-zone</span> {
+  <span class="pp">box-shadow</span>: <span class="nm">0 0 0 4px rgba(230,197,127,.5), 0 0 18px rgba(230,197,127,.55)</span>;
+  <span class="pp">transition</span>: box-shadow <span class="nm">.15s</span> ease;
+}
+
+<span class="cm">/* Win celebration confetti (spawned by spawnConfetti() above) */</span>
+<span class="sl">.confetti</span> {
+  <span class="pp">position</span>: absolute;
+  <span class="pp">left</span>: <span class="nm">50%</span>; <span class="pp">top</span>: <span class="nm">45%</span>;
+  <span class="pp">font-size</span>: <span class="nm">1rem</span>;
+  <span class="pp">pointer-events</span>: none;
+  <span class="pp">animation</span>: confetti-fly <span class="nm">.9s</span> ease-out forwards;
+}
+<span class="sl">@keyframes confetti-fly</span> {
+  <span class="nm">0%</span>   { <span class="pp">transform</span>: translate(0, 0) scale(1); <span class="pp">opacity</span>: <span class="nm">1</span>; }
+  <span class="nm">100%</span> { <span class="pp">transform</span>: translate(var(--tx), var(--ty)) scale(.4); <span class="pp">opacity</span>: <span class="nm">0</span>; }
+}</pre>
     </div>
 
     <div class="check">
       <span class="check-icon">🎮</span>
-      <div class="check-body">Checkpoint save everything and refresh. Your game is fully playable!<span>Hold the button, watch the liquid rise, release at the golden zone. Green pill = win, red pill = miss.</span></div>
+      <div class="check-body">Checkpoint: save everything and refresh. Your game is fully playable!<span>Hold the button : the cup glows gold when you're in the winning window. Release, and watch confetti fly on a win. Green pill = win, pink pill = miss.</span></div>
     </div>
   </section>
 
@@ -1159,11 +1270,11 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
     </p>
 
     <div class="stretch-grid">
-      <div class="sc"><div class="ic">😊</div><h4>Animated cup face</h4><p>Swap the CSS face for an emoji based on the liquid level  <code>😶</code> empty, <code>🙂</code> mid, <code>😱</code> overflowing.</p></div>
       <div class="sc"><div class="ic">🔥</div><h4>Win streak counter</h4><p>Count consecutive wins. Show "3 in a row! 🔥" and reset to 0 on any miss.</p></div>
-      <div class="sc"><div class="ic">⚡</div><h4>Narrowing target</h4><p>Start the zone at 10%. Narrow it by 1% each win. The game naturally gets harder!</p></div>
+      <div class="sc"><div class="ic">✨</div><h4>Shimmering title</h4><p>Give <code>h1</code> an animated gradient with <code>background-clip: text</code> for a subtle color-shift effect.</p></div>
+      <div class="sc"><div class="ic">⚡</div><h4>Narrowing target</h4><p>Start with <code>TOLERANCE = 6</code> and subtract 1 every win. The game naturally gets harder!</p></div>
       <div class="sc"><div class="ic">💾</div><h4>Save high score</h4><p>Use <code>localStorage.setItem('best', score)</code> to persist the best score between sessions.</p></div>
-      <div class="sc"><div class="ic">🎵</div><h4>Sound effects</h4><p>Use the Web Audio API to play a pour sound and a "ding" on win  no audio files needed.</p></div>
+      <div class="sc"><div class="ic">🎵</div><h4>Sound effects</h4><p>Use the Web Audio API to play a pour sound and a "ding" on win : no audio files needed.</p></div>
       <div class="sc"><div class="ic">📱</div><h4>Share button</h4><p>Add a "Share my score" button using the <code>navigator.share()</code> API on mobile.</p></div>
     </div>
 
@@ -1209,8 +1320,15 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
 <script>
 (function(){
   let level=0,pouring=false,gameOver=false,pourRate=.18;
-  let targetLow,targetHigh,interval=null,bestScore=null,attempts=[];
+  let target,interval=null,bestScore=null,attempts=[];
+  const TOLERANCE=2;
 
+  // Same trick as the real game: both the liquid and the target line are
+  // measured in pixels against this one constant, so they always agree.
+  const INNER_H=124; // the cup's fillable area, in px (matches the SVG art)
+  const BASE=14;     // px gap before the fillable area starts
+
+  const wrap   = document.getElementById('dc-wrap');
   const liq    = document.getElementById('dc-liq');
   const btn    = document.getElementById('dc-btn');
   const curEl  = document.getElementById('dc-cur');
@@ -1224,33 +1342,31 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
   const restart= document.getElementById('dc-restart');
   const smile  = document.getElementById('dc-smile');
 
-  function pickT(){
-    const rs=[[30,35],[40,45],[45,50],[50,55],[60,65],[70,75]];
-    const r=rs[Math.floor(Math.random()*rs.length)];
-    targetLow=r[0];targetHigh=r[1];
+  function pickTarget(){
+    const choices=[30,40,45,50,55,60,65,70,75];
+    target=choices[Math.floor(Math.random()*choices.length)];
   }
-  function drawBand(){
-    // cup inner area: total 150px, rim ~12px at top, bottom curve ~14px
-    const inner=124; // usable px
-    const bPx=inner*(targetLow/100);
-    const tPx=inner*(targetHigh/100);
-    band.style.bottom=(14+bPx)+'px';
+  function drawTargetLine(){
+    const bPx=INNER_H*((target-TOLERANCE)/100);
+    const tPx=INNER_H*((target+TOLERANCE)/100);
+    band.style.bottom=(BASE+bPx)+'px';
     band.style.height=(tPx-bPx)+'px';
     band.style.left='12px';band.style.right='12px';
     band.style.position='absolute';
   }
   function init(){
-    pickT();
+    pickTarget();
     level=0;pouring=false;gameOver=false;
     pourRate=.13+Math.random()*.10;
-    liq.style.height='0%';
+    liq.style.height='0px';
     curEl.textContent='0%';
-    resEl.textContent='';
+    resEl.textContent='';resEl.style.fontSize='';resEl.style.color='#6fa563';
+    wrap.classList.remove('in-zone');
     btn.disabled=false;btn.textContent='Hold to pour 🍵';
     mascot.textContent='🍵';
-    tgtEl.textContent=targetLow+'–'+targetHigh+'%';
-    badge.textContent='Fill to '+targetLow+'% – '+targetHigh+'%';
-    drawBand();
+    tgtEl.textContent=target+'%';
+    badge.textContent="🍵 Today's perfect pour: "+target+'%';
+    drawTargetLine();
     if(smile)smile.setAttribute('d','M 42 125 Q 55 133 68 125');
   }
   function go(){
@@ -1266,23 +1382,33 @@ restartBtn.<span class="fn">addEventListener</span>(<span class="str">'click'</s
   }
   function upd(){
     const h=Math.min(level,100);
-    liq.style.height=h+'%';
+    liq.style.height=(INNER_H*h/100)+'px'; // same scale as the target line
     curEl.textContent=Math.round(h)+'%';
+    wrap.classList.toggle('in-zone', Math.abs(Math.round(h)-target)<=TOLERANCE);
   }
   function stop(){
     if(!pouring)return;
     pouring=false;clearInterval(interval);upd();
+    wrap.classList.remove('in-zone');
     if(!gameOver)end();
   }
   function end(){
-    gameOver=true;btn.disabled=true;btn.textContent='Done! ✅';
+    gameOver=true;btn.disabled=true;btn.textContent='Poured! 🍵';
     const r=Math.round(level);
-    const win=r>=targetLow&&r<=targetHigh;
-    if(win){resEl.textContent='🍵 Perfect!';resEl.style.color='#2d7a2d';mascot.textContent='🥳';if(smile)smile.setAttribute('d','M 40 122 Q 55 136 70 122');}
-    else if(r<targetLow){resEl.textContent='↑ A bit more!';resEl.style.color='#c0392b';mascot.textContent='😔';if(smile)smile.setAttribute('d','M 42 130 Q 55 124 68 130');}
-    else{resEl.textContent='↓ Too much!';resEl.style.color='#c0392b';mascot.textContent='😅';if(smile)smile.setAttribute('d','M 42 130 Q 55 124 68 130');}
-    const d=Math.abs(r-(targetLow+targetHigh)/2);
-    if(bestScore===null||d<bestScore){bestScore=d;bestEl2.textContent=r+'%';}
+    const distance=Math.abs(r-target);
+    const win=distance<=TOLERANCE;
+    if(win){
+      resEl.textContent='Yay! Perfect pour! 🌸✨';
+      resEl.style.color='#4c7a3d';resEl.style.fontSize='1.1rem';
+      mascot.textContent='🥳';if(smile)smile.setAttribute('d','M 40 122 Q 55 136 70 122');
+    } else if(r<target){
+      resEl.textContent=distance<=5?'So close : a tiny drop more! 😅':'Too little! Hold a bit longer. 💧';
+      resEl.style.color='#c15f86';mascot.textContent='😔';if(smile)smile.setAttribute('d','M 42 130 Q 55 124 68 130');
+    } else {
+      resEl.textContent=distance<=5?'Almost! Release a tiny bit sooner! ⏱️':'Too much! Release earlier next time. 😱';
+      resEl.style.color='#c15f86';mascot.textContent='😅';if(smile)smile.setAttribute('d','M 42 130 Q 55 124 68 130');
+    }
+    if(bestScore===null||distance<bestScore){bestScore=distance;bestEl2.textContent=r+'%';}
     attempts.unshift({pct:r,win});
     if(attempts.length>5)attempts.pop();
     attEl.innerHTML='';
